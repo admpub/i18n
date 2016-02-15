@@ -1,6 +1,7 @@
 package i18n
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -56,6 +57,7 @@ func (f *TranslatorFactory) Reload(localeCode string) (t *Translator, errors []e
 
 	messages, errs := loadMessages(localeCode, f.messagesPaths)
 	for _, err := range errs {
+		fmt.Println(err)
 		errors = append(errors, err)
 	}
 
