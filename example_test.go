@@ -2,7 +2,7 @@ package i18n_test
 
 import (
 	"fmt"
-	"github.com/vube/i18n"
+	"github.com/admpub/i18n"
 )
 
 func ExampleNewTranslatorFactory() {
