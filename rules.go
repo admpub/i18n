@@ -6,7 +6,7 @@ import (
 	"os"
 
 	// third party
-	"gopkg.in/yaml.v1"
+	"github.com/admpub/confl"
 )
 
 // constants for text directionality
@@ -19,151 +19,151 @@ const (
 // TranslatorRules is a struct containing all of the information unmarshalled
 // from a locale rules file.
 type TranslatorRules struct {
-	Plural         string `yaml:"plural,omitempty"`
-	PluralRuleFunc pluralRule
-	Direction      string `yaml:"direction,omitempty"`
+	Plural         string     `json:"plural,omitempty" yaml:"plural,omitempty"`
+	PluralRuleFunc pluralRule `json:"-" yaml:"-"`
+	Direction      string     `json:"direction,omitempty" yaml:"direction,omitempty"`
 	Numbers        struct {
 		Symbols struct {
-			Decimal  string `yaml:"decimal,omitempty"`
-			Group    string `yaml:"group,omitempty"`
-			Negative string `yaml:"negative,omitempty"`
-			Percent  string `yaml:"percent,omitempty"`
-			Permille string `yaml:"permille,omitempty"`
-		} `yaml:"symbols,omitempty"`
+			Decimal  string `json:"decimal,omitempty" yaml:"decimal,omitempty"`
+			Group    string `json:"group,omitempty" yaml:"group,omitempty"`
+			Negative string `json:"negative,omitempty" yaml:"negative,omitempty"`
+			Percent  string `json:"percent,omitempty" yaml:"percent,omitempty"`
+			Permille string `json:"permille,omitempty" yaml:"permille,omitempty"`
+		} `json:"symbols,omitempty" yaml:"symbols,omitempty"`
 		Formats struct {
-			Decimal  string `yaml:"decimal,omitempty"`
-			Currency string `yaml:"currency,omitempty"`
-			Percent  string `yaml:"percent,omitempty"`
-		} `yaml:"formats,omitempty"`
-	} `yaml:"numbers,omitempty"`
-	Currencies map[string]currency `yaml:"currencies,omitempty"`
+			Decimal  string `json:"decimal,omitempty" yaml:"decimal,omitempty"`
+			Currency string `json:"currency,omitempty" yaml:"currency,omitempty"`
+			Percent  string `json:"percent,omitempty" yaml:"percent,omitempty"`
+		} `json:"formats,omitempty" yaml:"formats,omitempty"`
+	} `json:"numbers,omitempty" yaml:"numbers,omitempty"`
+	Currencies map[string]currency `json:"currencies,omitempty" yaml:"currencies,omitempty"`
 	DateTime   struct {
-		TimeSeparator string `yaml:"timeSeparator,omitempty"`
+		TimeSeparator string `json:"timeSeparator,omitempty" yaml:"timeSeparator,omitempty"`
 		Formats       struct {
 			Date struct {
-				Full   string `yaml:"full,omitempty"`
-				Long   string `yaml:"long,omitempty"`
-				Medium string `yaml:"medium,omitempty"`
-				Short  string `yaml:"short,omitempty"`
-			} `yaml:"date,omitempty"`
+				Full   string `json:"full,omitempty" yaml:"full,omitempty"`
+				Long   string `json:"long,omitempty" yaml:"long,omitempty"`
+				Medium string `json:"medium,omitempty" yaml:"medium,omitempty"`
+				Short  string `json:"short,omitempty" yaml:"short,omitempty"`
+			} `json:"date,omitempty" yaml:"date,omitempty"`
 			Time struct {
-				Full   string `yaml:"full,omitempty"`
-				Long   string `yaml:"long,omitempty"`
-				Medium string `yaml:"medium,omitempty"`
-				Short  string `yaml:"short,omitempty"`
-			} `yaml:"time,omitempty"`
+				Full   string `json:"full,omitempty" yaml:"full,omitempty"`
+				Long   string `json:"long,omitempty" yaml:"long,omitempty"`
+				Medium string `json:"medium,omitempty" yaml:"medium,omitempty"`
+				Short  string `json:"short,omitempty" yaml:"short,omitempty"`
+			} `json:"time,omitempty" yaml:"time,omitempty"`
 			DateTime struct {
-				Full   string `yaml:"full,omitempty"`
-				Long   string `yaml:"long,omitempty"`
-				Medium string `yaml:"medium,omitempty"`
-				Short  string `yaml:"short,omitempty"`
-			} `yaml:"datetime,omitempty"`
-		} `yaml:"formats,omitempty"`
+				Full   string `json:"full,omitempty" yaml:"full,omitempty"`
+				Long   string `json:"long,omitempty" yaml:"long,omitempty"`
+				Medium string `json:"medium,omitempty" yaml:"medium,omitempty"`
+				Short  string `json:"short,omitempty" yaml:"short,omitempty"`
+			} `json:"datetime,omitempty" yaml:"datetime,omitempty"`
+		} `json:"formats,omitempty" yaml:"formats,omitempty"`
 		FormatNames struct {
 			Months struct {
 				Abbreviated struct {
-					Month1  string `yaml:"1,omitempty"`
-					Month2  string `yaml:"2,omitempty"`
-					Month3  string `yaml:"3,omitempty"`
-					Month4  string `yaml:"4,omitempty"`
-					Month5  string `yaml:"5,omitempty"`
-					Month6  string `yaml:"6,omitempty"`
-					Month7  string `yaml:"7,omitempty"`
-					Month8  string `yaml:"8,omitempty"`
-					Month9  string `yaml:"9,omitempty"`
-					Month10 string `yaml:"10,omitempty"`
-					Month11 string `yaml:"11,omitempty"`
-					Month12 string `yaml:"12,omitempty"`
-				} `yaml:"abbreviated,omitempty"`
+					Month1  string `json:"1,omitempty" yaml:"1,omitempty"`
+					Month2  string `json:"2,omitempty" yaml:"2,omitempty"`
+					Month3  string `json:"3,omitempty" yaml:"3,omitempty"`
+					Month4  string `json:"4,omitempty" yaml:"4,omitempty"`
+					Month5  string `json:"5,omitempty" yaml:"5,omitempty"`
+					Month6  string `json:"6,omitempty" yaml:"6,omitempty"`
+					Month7  string `json:"7,omitempty" yaml:"7,omitempty"`
+					Month8  string `json:"8,omitempty" yaml:"8,omitempty"`
+					Month9  string `json:"9,omitempty" yaml:"9,omitempty"`
+					Month10 string `json:"10,omitempty" yaml:"10,omitempty"`
+					Month11 string `json:"11,omitempty" yaml:"11,omitempty"`
+					Month12 string `json:"12,omitempty" yaml:"12,omitempty"`
+				} `json:"abbreviated,omitempty" yaml:"abbreviated,omitempty"`
 				Narrow struct {
-					Month1  string `yaml:"1,omitempty"`
-					Month2  string `yaml:"2,omitempty"`
-					Month3  string `yaml:"3,omitempty"`
-					Month4  string `yaml:"4,omitempty"`
-					Month5  string `yaml:"5,omitempty"`
-					Month6  string `yaml:"6,omitempty"`
-					Month7  string `yaml:"7,omitempty"`
-					Month8  string `yaml:"8,omitempty"`
-					Month9  string `yaml:"9,omitempty"`
-					Month10 string `yaml:"10,omitempty"`
-					Month11 string `yaml:"11,omitempty"`
-					Month12 string `yaml:"12,omitempty"`
-				} `yaml:"narrow,omitempty"`
+					Month1  string `json:"1,omitempty" yaml:"1,omitempty"`
+					Month2  string `json:"2,omitempty" yaml:"2,omitempty"`
+					Month3  string `json:"3,omitempty" yaml:"3,omitempty"`
+					Month4  string `json:"4,omitempty" yaml:"4,omitempty"`
+					Month5  string `json:"5,omitempty" yaml:"5,omitempty"`
+					Month6  string `json:"6,omitempty" yaml:"6,omitempty"`
+					Month7  string `json:"7,omitempty" yaml:"7,omitempty"`
+					Month8  string `json:"8,omitempty" yaml:"8,omitempty"`
+					Month9  string `json:"9,omitempty" yaml:"9,omitempty"`
+					Month10 string `json:"10,omitempty" yaml:"10,omitempty"`
+					Month11 string `json:"11,omitempty" yaml:"11,omitempty"`
+					Month12 string `json:"12,omitempty" yaml:"12,omitempty"`
+				} `json:"narrow,omitempty" yaml:"narrow,omitempty"`
 				Wide struct {
-					Month1  string `yaml:"1,omitempty"`
-					Month2  string `yaml:"2,omitempty"`
-					Month3  string `yaml:"3,omitempty"`
-					Month4  string `yaml:"4,omitempty"`
-					Month5  string `yaml:"5,omitempty"`
-					Month6  string `yaml:"6,omitempty"`
-					Month7  string `yaml:"7,omitempty"`
-					Month8  string `yaml:"8,omitempty"`
-					Month9  string `yaml:"9,omitempty"`
-					Month10 string `yaml:"10,omitempty"`
-					Month11 string `yaml:"11,omitempty"`
-					Month12 string `yaml:"12,omitempty"`
-				} `yaml:"wide,omitempty"`
-			} `yaml:"months,omitempty"`
+					Month1  string `json:"1,omitempty" yaml:"1,omitempty"`
+					Month2  string `json:"2,omitempty" yaml:"2,omitempty"`
+					Month3  string `json:"3,omitempty" yaml:"3,omitempty"`
+					Month4  string `json:"4,omitempty" yaml:"4,omitempty"`
+					Month5  string `json:"5,omitempty" yaml:"5,omitempty"`
+					Month6  string `json:"6,omitempty" yaml:"6,omitempty"`
+					Month7  string `json:"7,omitempty" yaml:"7,omitempty"`
+					Month8  string `json:"8,omitempty" yaml:"8,omitempty"`
+					Month9  string `json:"9,omitempty" yaml:"9,omitempty"`
+					Month10 string `json:"10,omitempty" yaml:"10,omitempty"`
+					Month11 string `json:"11,omitempty" yaml:"11,omitempty"`
+					Month12 string `json:"12,omitempty" yaml:"12,omitempty"`
+				} `json:"wide,omitempty" yaml:"wide,omitempty"`
+			} `json:"months,omitempty" yaml:"months,omitempty"`
 			Days struct {
 				Abbreviated struct {
-					Sun string `yaml:"sun,omitempty"`
-					Mon string `yaml:"mon,omitempty"`
-					Tue string `yaml:"tue,omitempty"`
-					Wed string `yaml:"wed,omitempty"`
-					Thu string `yaml:"thu,omitempty"`
-					Fri string `yaml:"fri,omitempty"`
-					Sat string `yaml:"sat,omitempty"`
-				} `yaml:"abbreviated,omitempty"`
+					Sun string `json:"sun,omitempty" yaml:"sun,omitempty"`
+					Mon string `json:"mon,omitempty" yaml:"mon,omitempty"`
+					Tue string `json:"tue,omitempty" yaml:"tue,omitempty"`
+					Wed string `json:"wed,omitempty" yaml:"wed,omitempty"`
+					Thu string `json:"thu,omitempty" yaml:"thu,omitempty"`
+					Fri string `json:"fri,omitempty" yaml:"fri,omitempty"`
+					Sat string `json:"sat,omitempty" yaml:"sat,omitempty"`
+				} `json:"abbreviated,omitempty" yaml:"abbreviated,omitempty"`
 				Narrow struct {
-					Sun string `yaml:"sun,omitempty"`
-					Mon string `yaml:"mon,omitempty"`
-					Tue string `yaml:"tue,omitempty"`
-					Wed string `yaml:"wed,omitempty"`
-					Thu string `yaml:"thu,omitempty"`
-					Fri string `yaml:"fri,omitempty"`
-					Sat string `yaml:"sat,omitempty"`
-				} `yaml:"narrow,omitempty"`
+					Sun string `json:"sun,omitempty" yaml:"sun,omitempty"`
+					Mon string `json:"mon,omitempty" yaml:"mon,omitempty"`
+					Tue string `json:"tue,omitempty" yaml:"tue,omitempty"`
+					Wed string `json:"wed,omitempty" yaml:"wed,omitempty"`
+					Thu string `json:"thu,omitempty" yaml:"thu,omitempty"`
+					Fri string `json:"fri,omitempty" yaml:"fri,omitempty"`
+					Sat string `json:"sat,omitempty" yaml:"sat,omitempty"`
+				} `json:"narrow,omitempty" yaml:"narrow,omitempty"`
 				Short struct {
-					Sun string `yaml:"sun,omitempty"`
-					Mon string `yaml:"mon,omitempty"`
-					Tue string `yaml:"tue,omitempty"`
-					Wed string `yaml:"wed,omitempty"`
-					Thu string `yaml:"thu,omitempty"`
-					Fri string `yaml:"fri,omitempty"`
-					Sat string `yaml:"sat,omitempty"`
-				} `yaml:"short,omitempty"`
+					Sun string `json:"sun,omitempty" yaml:"sun,omitempty"`
+					Mon string `json:"mon,omitempty" yaml:"mon,omitempty"`
+					Tue string `json:"tue,omitempty" yaml:"tue,omitempty"`
+					Wed string `json:"wed,omitempty" yaml:"wed,omitempty"`
+					Thu string `json:"thu,omitempty" yaml:"thu,omitempty"`
+					Fri string `json:"fri,omitempty" yaml:"fri,omitempty"`
+					Sat string `json:"sat,omitempty" yaml:"sat,omitempty"`
+				} `json:"short,omitempty" yaml:"short,omitempty"`
 				Wide struct {
-					Sun string `yaml:"sun,omitempty"`
-					Mon string `yaml:"mon,omitempty"`
-					Tue string `yaml:"tue,omitempty"`
-					Wed string `yaml:"wed,omitempty"`
-					Thu string `yaml:"thu,omitempty"`
-					Fri string `yaml:"fri,omitempty"`
-					Sat string `yaml:"sat,omitempty"`
-				} `yaml:"wide,omitempty"`
-			} `yaml:"days,omitempty"`
+					Sun string `json:"sun,omitempty" yaml:"sun,omitempty"`
+					Mon string `json:"mon,omitempty" yaml:"mon,omitempty"`
+					Tue string `json:"tue,omitempty" yaml:"tue,omitempty"`
+					Wed string `json:"wed,omitempty" yaml:"wed,omitempty"`
+					Thu string `json:"thu,omitempty" yaml:"thu,omitempty"`
+					Fri string `json:"fri,omitempty" yaml:"fri,omitempty"`
+					Sat string `json:"sat,omitempty" yaml:"sat,omitempty"`
+				} `json:"wide,omitempty" yaml:"wide,omitempty"`
+			} `json:"days,omitempty" yaml:"days,omitempty"`
 			Periods struct {
 				Abbreviated struct {
-					AM string `yaml:"am,omitempty"`
-					PM string `yaml:"pm,omitempty"`
-				} `yaml:"abbreviated,omitempty"`
+					AM string `json:"am,omitempty" yaml:"am,omitempty"`
+					PM string `json:"pm,omitempty" yaml:"pm,omitempty"`
+				} `json:"abbreviated,omitempty" yaml:"abbreviated,omitempty"`
 				Narrow struct {
-					AM string `yaml:"am,omitempty"`
-					PM string `yaml:"pm,omitempty"`
-				} `yaml:"narrow,omitempty"`
+					AM string `json:"am,omitempty" yaml:"am,omitempty"`
+					PM string `json:"pm,omitempty" yaml:"pm,omitempty"`
+				} `json:"narrow,omitempty" yaml:"narrow,omitempty"`
 				Wide struct {
-					AM string `yaml:"am,omitempty"`
-					PM string `yaml:"pm,omitempty"`
-				} `yaml:"wide,omitempty"`
-			} `yaml:"periods,omitempty"`
-		} `yaml:"formatNames,omitempty"`
-	} `yaml:"datetime,omitempty"`
+					AM string `json:"am,omitempty" yaml:"am,omitempty"`
+					PM string `json:"pm,omitempty" yaml:"pm,omitempty"`
+				} `json:"wide,omitempty" yaml:"wide,omitempty"`
+			} `json:"periods,omitempty" yaml:"periods,omitempty"`
+		} `json:"formatNames,omitempty" yaml:"formatNames,omitempty"`
+	} `json:"datetime,omitempty" yaml:"datetime,omitempty"`
 }
 
 // currency is a struct that's used in the above TranslatorRules struct for
 // capturing the rule info for a single currency
 type currency struct {
-	Symbol string `yaml:"symbol,omitempty"`
+	Symbol string `json:"symbol,omitempty"`
 }
 
 // load unmarshalls rule data from yaml files into the translator's rules
@@ -179,7 +179,7 @@ func (t *TranslatorRules) load(files []string) (errors []error) {
 			}
 
 			tNew := new(TranslatorRules)
-			yamlErr := yaml.Unmarshal(contents, tNew)
+			yamlErr := confl.Unmarshal(contents, tNew)
 
 			if yamlErr != nil {
 				errors = append(errors, translatorError{message: "can't load rules YAML: " + yamlErr.Error()})
