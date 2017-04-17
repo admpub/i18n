@@ -35,7 +35,7 @@ func (f *TranslatorFactory) Reload(localeCode string) (t *Translator, errors []e
 	// load less specific fallback locale rules
 	parts := strings.Split(localeCode, "-")
 	if len(parts) > 1 {
-		for i, _ := range parts {
+		for i := range parts {
 			fb := strings.Join(parts[0:i+1], "-")
 			for _, p := range f.rulesPaths {
 				p = strings.TrimRight(p, pathSeparator)
