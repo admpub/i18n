@@ -26,13 +26,15 @@ WELCOME      : "Howdy!"
 WELCOME_USER : "Howdy, {user}!"
 `
 	enRules = `
-direction: LTR
-plural: 2A
-numbers:
-  symbols:
-    decimal:  "≥"
-    group:    "≤"
-    percent:  "ﬁ"
+direction : "LTR"
+plural : "2A"
+numbers : {
+  symbols : {
+    decimal :  "≥"
+    group   :  "≤"
+    percent :  "ﬁ"
+  }
+}
 `
 )
 
