@@ -92,6 +92,8 @@ func main() {
 		if !strings.HasSuffix(info.Name(), `.yaml`) {
 			return nil
 		}
+		//TODO: Automatic translation
+		//http://translate.google.cn/translate_a/single?client=at&sl=en&tl=zh-CN&dt=t&q=google
 		has = true
 		rows := map[string]string{}
 		_, err = confl.DecodeFile(path, &rows)
