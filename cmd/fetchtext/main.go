@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-
 	"strings"
 
 	"github.com/admpub/confl"
@@ -18,12 +17,14 @@ var (
 	reFunc  = regexp.MustCompile("\\.T\\([`\"](.*)[\"`]\\)")
 	reFunc1 = regexp.MustCompile(`\{\{T[ ]+"(.*?)"`)
 	reFunc2 = regexp.MustCompile(`\{\{"(.*?)"[ ]*\|[ ]*T[ }|]`)
+	reTKK   = regexp.MustCompile(`(?i)TKK\=eval\('\(\(function\(\)\{var\s+a\\x3d(-?\d+);var\s+b\\x3d(-?\d+);return\s+(\d+)\+`)
 
 	//settings
-	src  string
-	dist string
-	exts string
-	lang string
+	src       string
+	dist      string
+	exts      string
+	lang      string
+	translate bool
 )
 
 func main() {
@@ -31,6 +32,7 @@ func main() {
 	flag.StringVar(&dist, `dist`, `./messages`, `messages文件保存目录`)
 	flag.StringVar(&exts, `exts`, `go|html`, `正则表达式`)
 	flag.StringVar(&lang, `default`, `zh-cn`, `默认语言`)
+	flag.BoolVar(&translate, `translate`, false, `是否自动翻译`)
 	flag.Parse()
 
 	data := map[string][]string{} //键保存待翻译的文本，值保存出现待翻译文本的文件名
@@ -92,8 +94,6 @@ func main() {
 		if !strings.HasSuffix(info.Name(), `.yaml`) {
 			return nil
 		}
-		//TODO: Automatic translation
-		//http://translate.google.cn/translate_a/single?client=at&sl=en&tl=zh-CN&dt=t&q=google
 		has = true
 		rows := map[string]string{}
 		_, err = confl.DecodeFile(path, &rows)
@@ -105,7 +105,7 @@ func main() {
 			if _, y := rows[key]; y {
 				continue
 			}
-			rows[key] = key
+			rows[key] = t(key, strings.TrimSuffix(info.Name(), `.yaml`))
 			hasNew = true
 		}
 		if hasNew {
