@@ -98,6 +98,7 @@ func main() {
 		rows := map[string]string{}
 		_, err = confl.DecodeFile(path, &rows)
 		if err != nil {
+			log.Println(path, `[Error]`)
 			return err
 		}
 		var hasNew bool
