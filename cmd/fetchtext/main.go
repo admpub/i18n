@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	reFunc  = regexp.MustCompile("\\.(?:SetSucT|SetOkT|SetErrT|T)\\([`\"](.*)[\"`]\\)")
+	reFunc  = regexp.MustCompile("\\.(?:SetSucT|SetOkT|SetErrT|T|E)\\([`\"](.*)[\"`]\\)")
 	reFunc1 = regexp.MustCompile(`\{\{(?:[^}]*\()?T[ ]+"(.*?)"`)
 	reFunc2 = regexp.MustCompile(`\{\{"(.*?)"[ ]*\|[  ]*T[ }|]`)
 	reTKK   = regexp.MustCompile(`(?i)TKK\=eval\('\(\(function\(\)\{var\s+a\\x3d(-?\d+);var\s+b\\x3d(-?\d+);return\s+(\d+)\+`)
