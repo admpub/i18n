@@ -2,68 +2,78 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
+
+	"github.com/admpub/marmot/miner"
 )
 
-func tk() string {
+func tk() (string, error) {
 	url := `http://translate.google.cn`
 	resp, e := http.Get(url)
 	if e != nil {
-		log.Println(e)
-		return ``
+		return ``, e
 	}
 	defer resp.Body.Close()
 	b, e := ioutil.ReadAll(resp.Body)
 	if e != nil {
-		log.Println(e)
-		return ``
+		return ``, e
 	}
 	rs := reTKK.FindSubmatch(b)
 	if len(rs) > 3 {
 		n1, e := strconv.Atoi(string(rs[1]))
 		if e != nil {
-			log.Println(e)
-			return ``
+			return ``, e
 		}
 		n2, e := strconv.Atoi(string(rs[2]))
 		if e != nil {
-			log.Println(e)
-			return ``
+			return ``, e
 		}
-		return string(rs[2]) + `.` + strconv.Itoa(n1+n2)
+		return string(rs[2]) + `.` + strconv.Itoa(n1+n2), nil
 	}
-	return ``
+	return ``, nil
 }
 
-func t(text string, distLang string) string {
+func client(proxy string) (*http.Client, error) {
+	return miner.NewProxyClient(proxy, time.Second*10)
+}
+
+func t(text string, distLang string) (string, error) {
 	if !translate || lang == distLang {
-		return text
+		return text, nil
 	}
 	//TODO: Automatic translation
+	//http://translate.google.cn/translate_a/single?client=gtx&sl=zh-cn&tl=en&dt=t&q=中国&ie=UTF-8&oe=UTF-8
 	url := `http://translate.google.cn/translate_a/single?client=gtx&sl=` + lang + `&tl=` + distLang + `&dt=t&q=` + url.QueryEscape(text)
 	url += `&ie=UTF-8&oe=UTF-8`
-	//url += `&tk=` + tk()
+	/*
+		tk, err := tk()
+		if err != nil {
+			return ``, err
+		}
+		url += `&tk=` + tk
+	*/
 	resp, e := http.Get(url)
 	if e != nil {
-		log.Println(e)
-		return text
+		return text, e
 	}
 	defer resp.Body.Close()
 	b, e := ioutil.ReadAll(resp.Body)
 	if e != nil {
-		log.Println(e)
-		return text
+		return text, e
+	}
+	if resp.StatusCode != 200 {
+		return text, fmt.Errorf("[%v][%v] %v", resp.StatusCode, resp.Status, string(b))
 	}
 	r := []interface{}{}
 	e = json.Unmarshal(b, &r)
 	if e != nil {
-		log.Println(e)
-		log.Println(string(b))
-		return text
+		return text, e
 	}
 	if len(r) == 3 {
 		if v, y := r[0].([]interface{}); y {
@@ -72,7 +82,7 @@ func t(text string, distLang string) string {
 				if y && len(v) > 0 {
 					if val, ok := v[0].(string); ok {
 						log.Printf("[ %s -> %s ] %s -> %s\n", lang, distLang, text, val)
-						return val
+						return val, nil
 					}
 					log.Printf(`Google Translate: r[0][0][0] => %T`, v[0])
 					log.Println()
@@ -87,5 +97,5 @@ func t(text string, distLang string) string {
 		}
 	}
 	log.Println(`Google Translate:`, string(b))
-	return text
+	return text, nil
 }

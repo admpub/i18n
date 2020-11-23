@@ -106,7 +106,10 @@ func main() {
 			if _, y := rows[key]; y {
 				continue
 			}
-			rows[key] = t(key, strings.TrimSuffix(info.Name(), `.yaml`))
+			rows[key], err = t(key, strings.TrimSuffix(info.Name(), `.yaml`))
+			if err != nil {
+				return err
+			}
 			hasNew = true
 		}
 		if hasNew {
