@@ -43,13 +43,13 @@ func client(proxy string) (*http.Client, error) {
 	return miner.NewProxyClient(proxy, time.Second*10)
 }
 
-func t(text string, distLang string) (string, error) {
-	if !translate || lang == distLang {
+func t(text string, destLang string) (string, error) {
+	if !translate || lang == destLang {
 		return text, nil
 	}
 	//TODO: Automatic translation
 	//http://translate.google.cn/translate_a/single?client=gtx&sl=zh-cn&tl=en&dt=t&q=中国&ie=UTF-8&oe=UTF-8
-	url := `http://translate.google.cn/translate_a/single?client=gtx&sl=` + lang + `&tl=` + distLang + `&dt=t&q=` + url.QueryEscape(text)
+	url := `http://translate.google.cn/translate_a/single?client=gtx&sl=` + lang + `&tl=` + destLang + `&dt=t&q=` + url.QueryEscape(text)
 	url += `&ie=UTF-8&oe=UTF-8`
 	/*
 		tk, err := tk()
@@ -81,7 +81,7 @@ func t(text string, distLang string) (string, error) {
 				v, y = v[0].([]interface{})
 				if y && len(v) > 0 {
 					if val, ok := v[0].(string); ok {
-						log.Printf("[ %s -> %s ] %s -> %s\n", lang, distLang, text, val)
+						log.Printf("[ %s -> %s ] %s -> %s\n", lang, destLang, text, val)
 						return val, nil
 					}
 					log.Printf(`Google Translate: r[0][0][0] => %T`, v[0])

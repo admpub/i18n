@@ -112,7 +112,8 @@ func main() {
 			if _, y := rows[key]; y {
 				continue
 			}
-			text, err := t(key, strings.TrimSuffix(info.Name(), `.yaml`))
+			destLang := strings.TrimSuffix(info.Name(), `.yaml`)
+			text, err := t(key, destLang)
 			if err != nil {
 				return err
 			}
