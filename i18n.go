@@ -138,7 +138,7 @@ func NewTranslatorFactory(rulesPaths []string, messagesPaths []string, fallbackL
 		if !foundRules {
 			file, err = fs.Open(fallbackLocale + ".yaml")
 			if err == nil {
-				if fi, err := file.Stat(); err == nil && fi.IsDir() == false {
+				if fi, err := file.Stat(); err == nil && !fi.IsDir() {
 					foundRules = true
 				}
 				file.Close()
@@ -172,7 +172,7 @@ func NewTranslatorFactory(rulesPaths []string, messagesPaths []string, fallbackL
 		if !foundMessages {
 			file, err = fs.Open(fallbackLocale + ".yaml")
 			if err == nil {
-				if fi, err := file.Stat(); err == nil && fi.IsDir() == false {
+				if fi, err := file.Stat(); err == nil && !fi.IsDir() {
 					foundMessages = true
 				}
 				file.Close()
@@ -216,12 +216,17 @@ func NewTranslatorFactory(rulesPaths []string, messagesPaths []string, fallbackL
 	if fallbackLocale != "" {
 		var errs []error
 		f.fallback, errs = f.GetTranslator(fallbackLocale)
-		for _, err := range errs {
-			errors = append(errors, err)
-		}
+		errors = append(errors, errs...)
 	}
 
 	return
+}
+
+func (f *TranslatorFactory) GetMessages(localeCode string) map[string]string {
+	if t, ok := f.translators[localeCode]; ok {
+		return t.messages
+	}
+	return nil
 }
 
 // GetTranslator returns an Translator instance for the requested locale. If you
@@ -239,9 +244,7 @@ func (f *TranslatorFactory) GetTranslator(localeCode string) (t *Translator, err
 	if !exists {
 		errors = append(errors, translatorError{message: "could not find rules and messages for locale " + localeCode})
 	}
-	for _, e := range errs {
-		errors = append(errors, e)
-	}
+	errors = append(errors, errs...)
 
 	rules := new(TranslatorRules)
 	files := []string{}
@@ -277,14 +280,10 @@ func (f *TranslatorFactory) GetTranslator(localeCode string) (t *Translator, err
 	}
 
 	errs = rules.load(files, f.getFileSystem)
-	for _, err := range errs {
-		errors = append(errors, err)
-	}
+	errors = append(errors, errs...)
 
 	messages, errs := loadMessages(localeCode, f.messagesPaths, f.getFileSystem)
-	for _, err := range errs {
-		errors = append(errors, err)
-	}
+	errors = append(errors, errs...)
 
 	t = new(Translator)
 	t.locale = localeCode
@@ -434,9 +433,7 @@ func (t *Translator) Pluralize(key string, number float64, numberStr string) (tr
 
 	var errs []error
 	translation, errs = t.substitute(parts[form], map[string]string{"n": numberStr})
-	for _, err := range errs {
-		errors = append(errors, err)
-	}
+	errors = append(errors, errs...)
 	return
 }
 
@@ -463,7 +460,7 @@ func (t *Translator) substitute(str string, substitutions map[string]string) (su
 	substituted = str
 
 	for find, replace := range substitutions {
-		if strings.Index(str, "{"+find+"}") == -1 {
+		if !strings.Contains(str, "{"+find+"}") {
 			errors = append(errors, translatorError{translator: t, message: "substitution not found: " + str + ", " + replace})
 		}
 		substituted = strings.Replace(substituted, "{"+find+"}", replace, -1)
