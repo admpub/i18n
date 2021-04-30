@@ -45,8 +45,11 @@ func main() {
 		return
 	}
 	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if info.IsDir() {
-			if info.Name() == `vendor` {
+			if info.Name() == `vendor` || strings.HasPrefix(info.Name(), `.`) {
 				return filepath.SkipDir
 			}
 			return nil
@@ -83,11 +86,14 @@ func main() {
 		log.Println(err)
 		return
 	}
-	if fi, err := os.Stat(dist); err != nil || fi.IsDir() == false {
+	if fi, err := os.Stat(dist); err != nil || !fi.IsDir() {
 		os.MkdirAll(dist, 0666)
 	}
 	var has bool
 	err = filepath.Walk(dist, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if info.IsDir() {
 			return nil
 		}
@@ -106,10 +112,14 @@ func main() {
 			if _, y := rows[key]; y {
 				continue
 			}
-			rows[key], err = t(key, strings.TrimSuffix(info.Name(), `.yaml`))
+			text, err := t(key, strings.TrimSuffix(info.Name(), `.yaml`))
 			if err != nil {
 				return err
 			}
+			if text == key {
+				continue
+			}
+			rows[key] = text
 			hasNew = true
 		}
 		if hasNew {
@@ -125,9 +135,6 @@ func main() {
 		ppath := filepath.Join(dist, lang+`.yaml`)
 		var b []byte
 		rows := map[string]string{}
-		for key := range data {
-			rows[key] = key
-		}
 		b, err = confl.Marshal(rows)
 		if err == nil {
 			err = ioutil.WriteFile(ppath, b, 0666)
