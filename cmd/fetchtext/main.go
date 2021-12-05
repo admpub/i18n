@@ -2,11 +2,9 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"io/ioutil"
 	"log"
-	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -62,23 +60,8 @@ func main() {
 		log.Println(`unsupported translator:`, translator)
 		return
 	}
-	if len(translatorConfig) > 0 {
-		if translatorConfig[0] == '{' {
-			err = json.Unmarshal([]byte(translatorConfig), &translatorParsedConfig)
-			if err != nil {
-				log.Println(err)
-				return
-			}
-		} else {
-			vs, err := url.ParseQuery(translatorConfig)
-			if err != nil {
-				log.Println(err)
-				return
-			}
-			for k := range vs {
-				translatorParsedConfig[k] = vs.Get(k)
-			}
-		}
+	if err = parseTranslatorConfig(); err != nil {
+		log.Println(err)
 	}
 	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

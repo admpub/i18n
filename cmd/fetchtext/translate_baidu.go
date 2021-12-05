@@ -29,9 +29,9 @@ type baiduTransResult struct {
 	Dst string `json:"dst"`
 }
 type baiduResponse struct {
-	From    string `json:"from"`
-	To      string `json:"to"`
-	Results []*baiduTransResult
+	From    string              `json:"from"`
+	To      string              `json:"to"`
+	Results []*baiduTransResult `json:"trans_result"`
 }
 
 func baiduTranslate(text string, destLang string) (string, error) {
@@ -62,6 +62,7 @@ func baiduTranslate(text string, destLang string) (string, error) {
 	if err != nil {
 		return text, err
 	}
+	//echo.Dump(r)
 	for _, v := range r.Results {
 		return v.Dst, nil
 	}
