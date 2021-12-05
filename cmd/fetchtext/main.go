@@ -6,6 +6,7 @@ import (
 	"flag"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -41,7 +42,7 @@ func main() {
 	flag.StringVar(&exts, `exts`, `go|html|js`, `正则表达式`)
 	flag.StringVar(&lang, `default`, `zh-cn`, `默认语言`)
 	flag.StringVar(&translator, `translator`, `google`, `翻译器类型`)
-	flag.StringVar(&translatorConfig, `translatorConfig`, `{}`, `翻译器配置`)
+	flag.StringVar(&translatorConfig, `translatorConfig`, ``, `翻译器配置(例如百度翻译配置为: appid=APPID&secret=SECRET)`)
 	flag.BoolVar(&translate, `translate`, false, `是否自动翻译`)
 	flag.Parse()
 
@@ -62,10 +63,21 @@ func main() {
 		return
 	}
 	if len(translatorConfig) > 0 {
-		err = json.Unmarshal([]byte(translatorConfig), &translatorParsedConfig)
-		if err != nil {
-			log.Println(err)
-			return
+		if translatorConfig[0] == '{' {
+			err = json.Unmarshal([]byte(translatorConfig), &translatorParsedConfig)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+		} else {
+			vs, err := url.ParseQuery(translatorConfig)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			for k := range vs {
+				translatorParsedConfig[k] = vs.Get(k)
+			}
 		}
 	}
 	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
