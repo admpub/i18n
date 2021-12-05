@@ -2,6 +2,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"io/ioutil"
 	"log"
@@ -24,12 +25,14 @@ var (
 	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)                             // App.t("text") App.t("%stext",'a')
 
 	//settings
-	src        string
-	dist       string
-	exts       string
-	lang       string
-	translate  bool
-	translator string
+	src                    string
+	dist                   string
+	exts                   string
+	lang                   string
+	translate              bool
+	translator             string
+	translatorConfig       string
+	translatorParsedConfig = map[string]string{}
 )
 
 func main() {
@@ -38,6 +41,7 @@ func main() {
 	flag.StringVar(&exts, `exts`, `go|html|js`, `正则表达式`)
 	flag.StringVar(&lang, `default`, `zh-cn`, `默认语言`)
 	flag.StringVar(&translator, `translator`, `google`, `翻译器类型`)
+	flag.StringVar(&translatorConfig, `translatorConfig`, `{}`, `翻译器配置`)
 	flag.BoolVar(&translate, `translate`, false, `是否自动翻译`)
 	flag.Parse()
 
@@ -56,6 +60,13 @@ func main() {
 	if translatorFn == nil {
 		log.Println(`unsupported translator:`, translator)
 		return
+	}
+	if len(translatorConfig) > 0 {
+		err = json.Unmarshal([]byte(translatorConfig), &translatorParsedConfig)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 	}
 	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -137,6 +148,9 @@ func main() {
 				continue
 			}
 			destLang := strings.TrimSuffix(info.Name(), `.yaml`)
+			if !translate || lang == destLang {
+				continue
+			}
 			text, err := translatorFn(key, destLang)
 			if err != nil {
 				return err

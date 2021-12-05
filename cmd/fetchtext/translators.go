@@ -2,6 +2,7 @@ package main
 
 var translators = map[string]func(text string, destLang string) (string, error){
 	`google`: googleTranslate,
+	`baidu`:  baiduTranslate,
 }
 
 func RegisterTranslator(name string, fn func(text string, destLang string) (string, error)) {

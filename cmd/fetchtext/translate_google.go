@@ -40,9 +40,6 @@ func googleTK() (string, error) {
 }
 
 func googleTranslate(text string, destLang string) (string, error) {
-	if !translate || lang == destLang {
-		return text, nil
-	}
 	//TODO: Automatic translation
 	//http://translate.google.cn/translate_a/single?client=gtx&sl=zh-cn&tl=en&dt=t&q=中国&ie=UTF-8&oe=UTF-8
 	url := `http://translate.google.cn/translate_a/single?client=gtx&sl=` + lang + `&tl=` + destLang + `&dt=t&q=` + url.QueryEscape(text)
