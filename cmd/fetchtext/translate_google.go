@@ -7,13 +7,13 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
-	"time"
-
-	"github.com/admpub/marmot/miner"
 )
 
-func tk() (string, error) {
+var reGoogleTKK = regexp.MustCompile(`(?i)TKK\=eval\('\(\(function\(\)\{var\s+a\\x3d(-?\d+);var\s+b\\x3d(-?\d+);return\s+(\d+)\+`)
+
+func googleTK() (string, error) {
 	url := `http://translate.google.cn`
 	resp, e := http.Get(url)
 	if e != nil {
@@ -24,7 +24,7 @@ func tk() (string, error) {
 	if e != nil {
 		return ``, e
 	}
-	rs := reTKK.FindSubmatch(b)
+	rs := reGoogleTKK.FindSubmatch(b)
 	if len(rs) > 3 {
 		n1, e := strconv.Atoi(string(rs[1]))
 		if e != nil {
@@ -39,11 +39,7 @@ func tk() (string, error) {
 	return ``, nil
 }
 
-func client(proxy string) (*http.Client, error) {
-	return miner.NewProxyClient(proxy, time.Second*10)
-}
-
-func t(text string, destLang string) (string, error) {
+func googleTranslate(text string, destLang string) (string, error) {
 	if !translate || lang == destLang {
 		return text, nil
 	}
