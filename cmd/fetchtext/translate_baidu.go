@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/webx-top/com"
 )
@@ -36,8 +37,8 @@ type baiduResponse struct {
 func baiduTranslate(text string, destLang string) (string, error) {
 	values := url.Values{
 		`q`:     []string{text},
-		`from`:  []string{lang},
-		`to`:    []string{destLang},
+		`from`:  []string{strings.SplitN(lang, `-`, 2)[0]},
+		`to`:    []string{strings.SplitN(destLang, `-`, 2)[0]},
 		`appid`: []string{translatorParsedConfig[`appid`]},
 		`salt`:  []string{com.RandomAlphanumeric(16)},
 	}
