@@ -10,7 +10,7 @@ import (
 
 	"github.com/admpub/confl"
 	"github.com/admpub/i18n"
-	"gopkg.in/yaml.v1"
+	"gopkg.in/yaml.v3"
 )
 
 var (

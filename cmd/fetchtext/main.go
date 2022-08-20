@@ -14,14 +14,18 @@ import (
 )
 
 var (
-	reFunc       = regexp.MustCompile("\\.(?:SetSucT|SetOkT|SetErrT|T|E)\\(`([^`]+)`") // ctx.T(`text``) ctx.T(`%stext``,"a") ctx.E(`text``) ctx.E(`%stext`,"a")
-	reFunc0      = regexp.MustCompile(`\.(?:SetSucT|SetOkT|SetErrT|T|E)\("([^"]+)"`)   // ctx.T("text") ctx.T("%stext","a") ctx.E("text") ctx.E("%stext","a")
-	reTplFunc    = regexp.MustCompile(`\{\{(?:[^}]*\()?T[ ]+"(.*?)"`)                  // {{T "text"}} {{T "%dtext" 1}} {{printf "other%s" (T "%dtext" 1)}}
-	reTplFunc0   = regexp.MustCompile("\\{\\{(?:[^}]*\\()?T[ ]+`(.*?)`")               // {{T `text``}} {{T `%dtext`` 1}} {{printf "other%s" (T `%dtext`` 1)}}
-	reTplFunc1   = regexp.MustCompile(`\{\{"(.*?)"[ ]*\|[ ]*T[ }|]`)                   // {{"text"|T}} {{"text"|T|ToHTML}}
-	reTplFunc1_0 = regexp.MustCompile("\\{\\{`(.*?)`[ ]*\\|[ ]*T[ }|]")                // {{`text`|T}} {{`text`|T|ToHTML}}
-	reJSFunc     = regexp.MustCompile(`App\.t\('([^']+)'`)                             // App.t('text') App.t('%stext','a')
-	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)                             // App.t("text") App.t("%stext",'a')
+	reFunc  = regexp.MustCompile("\\.(?:SetSucT|SetOkT|SetErrT|T|E)\\(`([^`]+)`") // ctx.T(`text``) ctx.T(`%stext``,"a") ctx.E(`text``) ctx.E(`%stext`,"a") .NewError(code.InvalidParameter, `
+	reFunc0 = regexp.MustCompile(`\.(?:SetSucT|SetOkT|SetErrT|T|E)\("([^"]+)"`)   // ctx.T("text") ctx.T("%stext","a") ctx.E("text") ctx.E("%stext","a")
+
+	reFunc1   = regexp.MustCompile("\\.NewError\\(code\\.[\\w]+,[ ]?`([^`]+)`")
+	reFunc1_0 = regexp.MustCompile(`\.NewError\(code\.[\w]+,[ ]?"([^"]+)"`)
+
+	reTplFunc    = regexp.MustCompile(`\{\{(?:[^}]*\()?T[ ]+"(.*?)"`)    // {{T "text"}} {{T "%dtext" 1}} {{printf "other%s" (T "%dtext" 1)}}
+	reTplFunc0   = regexp.MustCompile("\\{\\{(?:[^}]*\\()?T[ ]+`(.*?)`") // {{T `text``}} {{T `%dtext`` 1}} {{printf "other%s" (T `%dtext`` 1)}}
+	reTplFunc1   = regexp.MustCompile(`\{\{"(.*?)"[ ]*\|[ ]*T[ }|]`)     // {{"text"|T}} {{"text"|T|ToHTML}}
+	reTplFunc1_0 = regexp.MustCompile("\\{\\{`(.*?)`[ ]*\\|[ ]*T[ }|]")  // {{`text`|T}} {{`text`|T|ToHTML}}
+	reJSFunc     = regexp.MustCompile(`App\.t\('([^']+)'`)               // App.t('text') App.t('%stext','a')
+	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)               // App.t("text") App.t("%stext",'a')
 
 	//settings
 	src                    string
@@ -45,7 +49,7 @@ func main() {
 	flag.Parse()
 
 	data := map[string][]string{} //键保存待翻译的文本，值保存出现待翻译文本的文件名
-	goRegexes := []*regexp.Regexp{reFunc, reFunc0}
+	goRegexes := []*regexp.Regexp{reFunc, reFunc0, reFunc1, reFunc1_0}
 	htmlRegexes := []*regexp.Regexp{reTplFunc, reTplFunc0, reTplFunc1, reTplFunc1_0}
 	jsRegexes := []*regexp.Regexp{reJSFunc, reJSFunc0}
 	reExt := regexp.MustCompile(`\.(` + exts + `)$`)
