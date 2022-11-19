@@ -20,12 +20,12 @@ var (
 	reFunc1   = regexp.MustCompile("\\.NewError\\(code\\.[\\w]+,[ ]?`([^`]+)`")
 	reFunc1_0 = regexp.MustCompile(`\.NewError\(code\.[\w]+,[ ]?"([^"]+)"`)
 
-	reTplFunc    = regexp.MustCompile(`\{\{(?:[^}]*\()?T[ ]+"(.*?)"`)    // {{T "text"}} {{T "%dtext" 1}} {{printf "other%s" (T "%dtext" 1)}}
-	reTplFunc0   = regexp.MustCompile("\\{\\{(?:[^}]*\\()?T[ ]+`(.*?)`") // {{T `text``}} {{T `%dtext`` 1}} {{printf "other%s" (T `%dtext`` 1)}}
-	reTplFunc1   = regexp.MustCompile(`\{\{"(.*?)"[ ]*\|[ ]*T[ }|]`)     // {{"text"|T}} {{"text"|T|ToHTML}}
-	reTplFunc1_0 = regexp.MustCompile("\\{\\{`(.*?)`[ ]*\\|[ ]*T[ }|]")  // {{`text`|T}} {{`text`|T|ToHTML}}
-	reJSFunc     = regexp.MustCompile(`App\.t\('([^']+)'`)               // App.t('text') App.t('%stext','a')
-	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)               // App.t("text") App.t("%stext",'a')
+	reTplFunc    = regexp.MustCompile(`\{\{(?:[^}]*\()?\$\.T[ ]+"(.*?)"`)      // {{$.T "text"}} {{$.T "%dtext" 1}} {{printf "other%s" ($.T "%dtext" 1)}}
+	reTplFunc0   = regexp.MustCompile("\\{\\{(?:[^}]*\\()?\\$\\.T[ ]+`(.*?)`") // {{$.T `text``}} {{$.T `%dtext`` 1}} {{printf "other%s" ($.T `%dtext`` 1)}}
+	reTplFunc1   = regexp.MustCompile(`\{\{"(.*?)"[ ]*\|[ ]*\$\.T[ }|]`)       // {{"text"|$.T}} {{"text"|$.T|ToHTML}}
+	reTplFunc1_0 = regexp.MustCompile("\\{\\{`(.*?)`[ ]*\\|[ ]*\\$\\.T[ }|]")  // {{`text`|$.T}} {{`text`|$.T|ToHTML}}
+	reJSFunc     = regexp.MustCompile(`App\.t\('([^']+)'`)                     // App.t('text') App.t('%stext','a')
+	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)                     // App.t("text") App.t("%stext",'a')
 
 	//settings
 	src                    string
