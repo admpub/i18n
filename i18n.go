@@ -319,7 +319,7 @@ func (f *TranslatorFactory) getFallback(localeCode string) *Translator {
 func (f *TranslatorFactory) LocaleExists(localeCode string) (exists bool, errs []error) {
 	localeCodes := []string{localeCode}
 	if len(f.project) > 0 {
-		localeCodes = append(localeCodes, f.project+`_`+localeCode)
+		localeCodes = append(localeCodes, f.project+`.`+localeCode)
 	}
 	for _, p := range f.messagesPaths {
 		p = strings.TrimRight(p, pathSeparator)
@@ -389,7 +389,7 @@ func loadMessages(project string, locale string, messagesPaths []string, fsFunc 
 	messages = make(map[string]string)
 	localeCodes := []string{locale}
 	if len(project) > 0 {
-		localeCodes = append(localeCodes, project+`_`+locale)
+		localeCodes = append(localeCodes, project+`.`+locale)
 	}
 	found := false
 	for _, p := range messagesPaths {
