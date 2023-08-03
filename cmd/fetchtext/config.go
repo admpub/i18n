@@ -28,18 +28,14 @@ func parseTranslatorConfig() (err error) {
 	}
 	if com.FileExists(`.translator.env`) {
 		envMap, _ := godotenv.Read(".translator.env")
-		if envMap != nil {
-			for k, v := range envMap {
-				translatorParsedConfig[k] = v
-			}
+		for k, v := range envMap {
+			translatorParsedConfig[k] = v
 		}
 	}
 	if com.FileExists(`.translator_` + translator + `.env`) {
 		envMap, _ := godotenv.Read(`.translator_` + translator + `.env`)
-		if envMap != nil {
-			for k, v := range envMap {
-				translatorParsedConfig[k] = v
-			}
+		for k, v := range envMap {
+			translatorParsedConfig[k] = v
 		}
 	}
 	return

@@ -3,28 +3,27 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
+
+	"github.com/webx-top/restyclient"
 )
 
 var reGoogleTKK = regexp.MustCompile(`(?i)TKK\=eval\('\(\(function\(\)\{var\s+a\\x3d(-?\d+);var\s+b\\x3d(-?\d+);return\s+(\d+)\+`)
 
 func googleTK() (string, error) {
 	url := `http://translate.google.cn`
-	resp, e := http.Get(url)
+	req := restyclient.Classic()
+	resp, e := req.Get(url)
 	if e != nil {
 		return ``, e
 	}
-	defer resp.Body.Close()
-	b, e := ioutil.ReadAll(resp.Body)
-	if e != nil {
-		return ``, e
+	if !resp.IsSuccess() {
+		return ``, fmt.Errorf("[%v][%s] %s", resp.StatusCode(), resp.Status(), resp.Body())
 	}
-	rs := reGoogleTKK.FindSubmatch(b)
+	rs := reGoogleTKK.FindSubmatch(resp.Body())
 	if len(rs) > 3 {
 		n1, e := strconv.Atoi(string(rs[1]))
 		if e != nil {
@@ -51,20 +50,16 @@ func googleTranslate(text string, destLang string) (string, error) {
 		}
 		url += `&tk=` + tk
 	*/
-	resp, e := http.Get(url)
+	req := restyclient.Classic()
+	resp, e := req.Get(url)
 	if e != nil {
 		return text, e
 	}
-	defer resp.Body.Close()
-	b, e := ioutil.ReadAll(resp.Body)
-	if e != nil {
-		return text, e
-	}
-	if resp.StatusCode != 200 {
-		return text, fmt.Errorf("[%v][%v] %v", resp.StatusCode, resp.Status, string(b))
+	if !resp.IsSuccess() {
+		return text, fmt.Errorf("[%v][%s] %s", resp.StatusCode(), resp.Status(), resp.Body())
 	}
 	r := []interface{}{}
-	e = json.Unmarshal(b, &r)
+	e = json.Unmarshal(resp.Body(), &r)
 	if e != nil {
 		return text, e
 	}
@@ -89,6 +84,6 @@ func googleTranslate(text string, destLang string) (string, error) {
 			log.Println()
 		}
 	}
-	log.Println(`Google Translate:`, string(b))
+	log.Println(`Google Translate:`, string(resp.Body()))
 	return text, nil
 }

@@ -3,7 +3,6 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -80,7 +79,7 @@ func main() {
 		if !reExt.MatchString(info.Name()) {
 			return nil
 		}
-		content, err := ioutil.ReadFile(path)
+		content, err := os.ReadFile(path)
 		if err != nil {
 			return err
 		}
@@ -147,15 +146,20 @@ func main() {
 				continue
 			}
 			destLang := strings.TrimSuffix(info.Name(), `.yaml`)
-			if !translate || lang == destLang {
+			if lang == destLang {
 				continue
 			}
-			text, err := translatorFn(key, destLang)
-			if err != nil {
-				return err
-			}
-			if text == key {
-				continue
+			var text string
+			if translate {
+				text, err = translatorFn(key, destLang)
+				if err != nil {
+					return err
+				}
+				if text == key {
+					continue
+				}
+			} else {
+				text = key
 			}
 			rows[key] = text
 			hasNew = true
@@ -165,7 +169,7 @@ func main() {
 			if err != nil {
 				return err
 			}
-			return ioutil.WriteFile(path, b, info.Mode())
+			return os.WriteFile(path, b, info.Mode())
 		}
 		return nil
 	})
@@ -175,7 +179,7 @@ func main() {
 		rows := map[string]string{}
 		b, err = confl.Marshal(rows)
 		if err == nil {
-			err = ioutil.WriteFile(ppath, b, 0766)
+			err = os.WriteFile(ppath, b, 0766)
 		}
 	}
 	if err != nil {
