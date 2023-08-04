@@ -2,6 +2,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"log"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/admpub/confl"
+	"github.com/webx-top/com"
 )
 
 var (
@@ -35,6 +37,7 @@ var (
 	translator             string
 	translatorConfig       string
 	translatorParsedConfig = map[string]string{}
+	onlyExportParsed       bool
 )
 
 func main() {
@@ -45,6 +48,7 @@ func main() {
 	flag.StringVar(&translator, `translator`, `google`, `翻译器类型`)
 	flag.StringVar(&translatorConfig, `translatorConfig`, ``, `翻译器配置(例如百度翻译配置为: appid=APPID&secret=SECRET)`)
 	flag.BoolVar(&translate, `translate`, false, `是否自动翻译`)
+	flag.BoolVar(&onlyExportParsed, `onlyExport`, false, `是否仅仅导出解析语言文件后的json数据`)
 	flag.Parse()
 
 	data := map[string][]string{} //键保存待翻译的文本，值保存出现待翻译文本的文件名
@@ -52,30 +56,7 @@ func main() {
 	htmlRegexes := []*regexp.Regexp{reTplFunc, reTplFunc0, reTplFunc1, reTplFunc1_0}
 	jsRegexes := []*regexp.Regexp{reJSFunc, reJSFunc0}
 	reExt := regexp.MustCompile(`\.(` + exts + `)$`)
-	var err error
-	src, err = filepath.Abs(src)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	translatorFn := GetTranslator(translator)
-	if translatorFn == nil {
-		log.Println(`unsupported translator:`, translator)
-		return
-	}
-	if err = parseTranslatorConfig(); err != nil {
-		log.Println(err)
-	}
-	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.IsDir() {
-			if info.Name() == `vendor` || strings.HasPrefix(info.Name(), `.`) {
-				return filepath.SkipDir
-			}
-			return nil
-		}
+	var readResourceFile = func(path string, info os.FileInfo) error {
 		if !reExt.MatchString(info.Name()) {
 			return nil
 		}
@@ -109,6 +90,48 @@ func main() {
 		}
 		log.Println(path)
 		return nil
+	}
+	var err error
+	src, err = filepath.Abs(src)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	translatorFn := GetTranslator(translator)
+	if translatorFn == nil {
+		log.Println(`unsupported translator:`, translator)
+		return
+	}
+	if err = parseTranslatorConfig(); err != nil {
+		log.Println(err)
+	}
+	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			if strings.HasPrefix(info.Name(), `.`) {
+				return filepath.SkipDir
+			}
+			if info.Name() == `vendor` {
+				pluginsDir := filepath.Join(path, `github.com/nging-plugins`)
+				if com.FileExists(pluginsDir) {
+					filepath.Walk(pluginsDir, func(path string, info os.FileInfo, err error) error {
+						if err != nil {
+							return err
+						}
+						if info.IsDir() {
+							return nil
+						}
+						return readResourceFile(path, info)
+					})
+				}
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		return readResourceFile(path, info)
 	})
 	if err != nil {
 		log.Println(err)
@@ -138,6 +161,18 @@ func main() {
 		_, err = confl.DecodeFile(path, &rows)
 		if err != nil {
 			log.Println(path, `[Error]`)
+			return err
+		}
+		if onlyExportParsed {
+			file, err := os.Create(info.Name() + `.json`)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+			enc := json.NewEncoder(file)
+			enc.SetEscapeHTML(false)
+			enc.SetIndent(``, `  `)
+			err = enc.Encode(rows)
 			return err
 		}
 		var hasNew bool
