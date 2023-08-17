@@ -4,11 +4,13 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/admpub/confl"
 	"github.com/webx-top/com"
@@ -196,7 +198,19 @@ func main() {
 				}
 				text, err = translatorFn(key, destLang)
 				if err != nil {
-					return err
+					wait := time.Second * 2
+					for i := 0; i < 5; i++ {
+						log.Println(err.Error(), `Will retry after `+wait.String(), fmt.Sprintf(`(%d/%d)`, i+1, 5))
+						time.Sleep(wait)
+						text, err = translatorFn(key, destLang)
+						if err == nil {
+							break
+						}
+					}
+				}
+				if err != nil {
+					log.Println(err)
+					break
 				}
 				if text == key {
 					continue
