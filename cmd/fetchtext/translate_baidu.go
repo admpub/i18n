@@ -35,7 +35,7 @@ type baiduResponse struct {
 }
 
 func baiduTranslate(text string, destLang string) (string, error) {
-	time.Sleep(time.Second)
+	time.Sleep(time.Second) // 接口频率限制：1次/秒
 	values := url.Values{
 		`q`:     []string{text},
 		`from`:  []string{strings.SplitN(lang, `-`, 2)[0]},
@@ -59,7 +59,7 @@ func baiduTranslate(text string, destLang string) (string, error) {
 	if err != nil {
 		return text, err
 	}
-	//echo.Dump(r)
+	//com.Dump(r)
 	for _, v := range r.Results {
 		return v.Dst, nil
 	}
