@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -50,7 +50,7 @@ func baiduTranslate(text string, destLang string) (string, error) {
 		return text, e
 	}
 	defer resp.Body.Close()
-	b, e := ioutil.ReadAll(resp.Body)
+	b, e := io.ReadAll(resp.Body)
 	if e != nil {
 		return text, e
 	}

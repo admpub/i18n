@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -20,7 +20,7 @@ func googleTK() (string, error) {
 		return ``, e
 	}
 	defer resp.Body.Close()
-	b, e := ioutil.ReadAll(resp.Body)
+	b, e := io.ReadAll(resp.Body)
 	if e != nil {
 		return ``, e
 	}
@@ -56,7 +56,7 @@ func googleTranslate(text string, destLang string) (string, error) {
 		return text, e
 	}
 	defer resp.Body.Close()
-	b, e := ioutil.ReadAll(resp.Body)
+	b, e := io.ReadAll(resp.Body)
 	if e != nil {
 		return text, e
 	}

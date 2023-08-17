@@ -1,7 +1,6 @@
 package i18n
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -66,41 +65,41 @@ func (s *MySuite) SetUpSuite(c *C) {
 	c.Assert(err, IsNil)
 
 	// write the messages yaml files - mixed style
-	err = ioutil.WriteFile(s.messagesDir+"/en.yaml", []byte(enMessages), os.FileMode(0777))
+	err = os.WriteFile(s.messagesDir+"/en.yaml", []byte(enMessages), os.FileMode(0777))
 	c.Assert(err, IsNil)
 
-	contents, readErr := ioutil.ReadFile(s.messagesDir + "/en.yaml")
+	contents, readErr := os.ReadFile(s.messagesDir + "/en.yaml")
 	c.Assert(readErr, IsNil)
 	c.Assert(string(contents), Equals, enMessages)
 
-	err = ioutil.WriteFile(s.messagesDir+"/en/default.yaml", []byte(`GOODBYE : "So long!"`), os.FileMode(0777))
+	err = os.WriteFile(s.messagesDir+"/en/default.yaml", []byte(`GOODBYE : "So long!"`), os.FileMode(0777))
 	c.Assert(err, IsNil)
 
-	contents, readErr = ioutil.ReadFile(s.messagesDir + "/en/default.yaml")
+	contents, readErr = os.ReadFile(s.messagesDir + "/en/default.yaml")
 	c.Assert(readErr, IsNil)
 	c.Assert(string(contents), Equals, `GOODBYE : "So long!"`)
 
 	// write the messages yaml files - style 1
-	err = ioutil.WriteFile(s.messagesDirStyle1+"/en.yaml", []byte(enMessages), os.FileMode(0777))
+	err = os.WriteFile(s.messagesDirStyle1+"/en.yaml", []byte(enMessages), os.FileMode(0777))
 	c.Assert(err, IsNil)
 
-	contents, readErr = ioutil.ReadFile(s.messagesDir + "/en/default.yaml")
+	contents, readErr = os.ReadFile(s.messagesDir + "/en/default.yaml")
 	c.Assert(readErr, IsNil)
 	c.Assert(string(contents), Equals, `GOODBYE : "So long!"`)
 
 	// write the messages yaml files - style 2
-	err = ioutil.WriteFile(s.messagesDirStyle2+"/en/default.yaml", []byte(`GOODBYE : "So long!"`), os.FileMode(0777))
+	err = os.WriteFile(s.messagesDirStyle2+"/en/default.yaml", []byte(`GOODBYE : "So long!"`), os.FileMode(0777))
 	c.Assert(err, IsNil)
 
-	contents, readErr = ioutil.ReadFile(s.messagesDirStyle2 + "/en/default.yaml")
+	contents, readErr = os.ReadFile(s.messagesDirStyle2 + "/en/default.yaml")
 	c.Assert(readErr, IsNil)
 	c.Assert(string(contents), Equals, `GOODBYE : "So long!"`)
 
 	// write the rules yaml files
-	err = ioutil.WriteFile(s.rulesDir+"/en.yaml", []byte(enRules), os.FileMode(0777))
+	err = os.WriteFile(s.rulesDir+"/en.yaml", []byte(enRules), os.FileMode(0777))
 	c.Assert(err, IsNil)
 
-	contents, readErr = ioutil.ReadFile(s.rulesDir + "/en.yaml")
+	contents, readErr = os.ReadFile(s.rulesDir + "/en.yaml")
 	c.Assert(readErr, IsNil)
 	c.Assert(string(contents), Equals, enRules)
 }

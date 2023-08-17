@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -11,10 +10,6 @@ import (
 	"github.com/admpub/confl"
 	"github.com/admpub/i18n"
 	"gopkg.in/yaml.v3"
-)
-
-var (
-	flagTypes = false
 )
 
 func init() {
@@ -73,7 +68,7 @@ func main() {
 
 func convFile(f string, saveAs string) error {
 	var tmp i18n.TranslatorRules
-	b, err := ioutil.ReadFile(f)
+	b, err := os.ReadFile(f)
 	if err != nil {
 		return err
 	}
@@ -86,5 +81,5 @@ func convFile(f string, saveAs string) error {
 		return err
 	}
 	log.Println(`conversion file:`, f)
-	return ioutil.WriteFile(saveAs, b, os.ModePerm)
+	return os.WriteFile(saveAs, b, os.ModePerm)
 }
