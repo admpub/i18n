@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/webx-top/com"
 	"github.com/webx-top/restyclient"
@@ -34,6 +35,7 @@ type baiduResponse struct {
 }
 
 func baiduTranslate(text string, destLang string) (string, error) {
+	time.Sleep(time.Second)
 	values := url.Values{
 		`q`:     []string{text},
 		`from`:  []string{strings.SplitN(lang, `-`, 2)[0]},
