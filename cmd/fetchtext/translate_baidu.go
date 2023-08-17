@@ -3,12 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/webx-top/com"
+	"github.com/webx-top/restyclient"
 )
 
 /*
@@ -45,20 +44,16 @@ func baiduTranslate(text string, destLang string) (string, error) {
 	sign := com.Md5(translatorParsedConfig[`appid`] + values.Get(`q`) + values.Get(`salt`) + translatorParsedConfig[`secret`]) //  appid+q+salt+密钥
 	values.Add(`sign`, sign)
 	url := `https://fanyi-api.baidu.com/api/trans/vip/translate?` + values.Encode()
-	resp, e := http.Get(url)
+	req := restyclient.Classic()
+	resp, e := req.Get(url)
 	if e != nil {
 		return text, e
 	}
-	defer resp.Body.Close()
-	b, e := io.ReadAll(resp.Body)
-	if e != nil {
-		return text, e
-	}
-	if resp.StatusCode != 200 {
-		return text, fmt.Errorf("[%v][%v] %v", resp.StatusCode, resp.Status, string(b))
+	if !resp.IsSuccess() {
+		return text, fmt.Errorf("[%v][%s] %s", resp.StatusCode(), resp.Status(), resp.Body())
 	}
 	r := &baiduResponse{}
-	err := json.Unmarshal(b, r)
+	err := json.Unmarshal(resp.Body(), r)
 	if err != nil {
 		return text, err
 	}
