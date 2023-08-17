@@ -27,6 +27,7 @@ var (
 	reTplFunc1_0 = regexp.MustCompile("\\{\\{`(.*?)`[ ]*\\|[ ]*\\$\\.T[ }|]")  // {{`text`|$.T}} {{`text`|$.T|ToHTML}}
 	reJSFunc     = regexp.MustCompile(`App\.t\('([^']+)'`)                     // App.t('text') App.t('%stext','a')
 	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)                     // App.t("text") App.t("%stext",'a')
+	reChinese    = regexp.MustCompile(`[\p{Han}]+`)
 
 	//settings
 	src                    string
@@ -38,6 +39,7 @@ var (
 	translatorConfig       string
 	translatorParsedConfig = map[string]string{}
 	onlyExportParsed       bool
+	forceAll               bool
 )
 
 func main() {
@@ -48,6 +50,7 @@ func main() {
 	flag.StringVar(&translator, `translator`, `google`, `翻译器类型`)
 	flag.StringVar(&translatorConfig, `translatorConfig`, ``, `翻译器配置(例如百度翻译配置为: appid=APPID&secret=SECRET)`)
 	flag.BoolVar(&translate, `translate`, false, `是否自动翻译`)
+	flag.BoolVar(&forceAll, `forceAll`, false, `是否翻译全部`)
 	flag.BoolVar(&onlyExportParsed, `onlyExport`, false, `是否仅仅导出解析语言文件后的json数据`)
 	flag.Parse()
 
@@ -175,17 +178,22 @@ func main() {
 			err = enc.Encode(rows)
 			return err
 		}
+		destLang := strings.TrimSuffix(info.Name(), `.yaml`)
+		if lang == destLang {
+			return err
+		}
 		var hasNew bool
 		for key := range data {
-			if _, y := rows[key]; y {
-				continue
-			}
-			destLang := strings.TrimSuffix(info.Name(), `.yaml`)
-			if lang == destLang {
-				continue
-			}
+			oldText, existsText := rows[key]
 			var text string
 			if translate {
+				if !existsText {
+					oldText = key
+				}
+				needTr := forceAll || needTranslation(oldText, destLang)
+				if !needTr {
+					continue
+				}
 				text, err = translatorFn(key, destLang)
 				if err != nil {
 					return err
@@ -222,4 +230,11 @@ func main() {
 		return
 	}
 	//com.Dump(data)
+}
+
+func needTranslation(text string, destLang string) bool {
+	if destLang == `zh-cn` {
+		return !reChinese.MatchString(text)
+	}
+	return reChinese.MatchString(text)
 }
