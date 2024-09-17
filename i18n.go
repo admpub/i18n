@@ -125,7 +125,7 @@ func NewTranslatorFactoryWith(project string, rulesPaths []string, messagesPaths
 			if foundRules {
 				continue
 			}
-			file, err = fs.Open(fallbackLocale + ".yaml")
+			file, err = fs.Open(p + pathSeparator + fallbackLocale + ".yaml")
 			if err != nil {
 				continue
 			}
@@ -160,7 +160,7 @@ func NewTranslatorFactoryWith(project string, rulesPaths []string, messagesPaths
 			if foundMessages {
 				continue
 			}
-			file, err = fs.Open(fallbackLocale + ".yaml")
+			file, err = fs.Open(p + pathSeparator + fallbackLocale + ".yaml")
 			if err == nil {
 				if fi, err := file.Stat(); err == nil && !fi.IsDir() {
 					foundMessages = true
@@ -168,7 +168,7 @@ func NewTranslatorFactoryWith(project string, rulesPaths []string, messagesPaths
 				file.Close()
 				continue
 			}
-			file, err = fs.Open(fallbackLocale)
+			file, err = fs.Open(p + pathSeparator + fallbackLocale)
 			if err != nil {
 				continue
 			}
