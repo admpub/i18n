@@ -1,15 +1,15 @@
 module github.com/admpub/i18n
 
-go 1.21
+go 1.23
 
 require (
 	github.com/admpub/confl v0.2.4
 	github.com/admpub/godotenv v1.4.3
 	github.com/elazarl/go-bindata-assetfs v1.0.1
-	github.com/webx-top/com v1.3.2
+	github.com/webx-top/com v1.3.20
 	github.com/webx-top/echo v1.6.1
-	github.com/webx-top/restyclient v0.0.4
-	golang.org/x/text v0.18.0
+	github.com/webx-top/restyclient v0.0.5
+	golang.org/x/text v0.21.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 	gopkg.in/stretchr/testify.v1 v1.2.2
 	gopkg.in/yaml.v3 v3.0.1
@@ -31,7 +31,7 @@ require (
 	github.com/araddon/gou v0.0.0-20190110011759-c797efecbb61 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
-	github.com/goccy/go-json v0.10.3 // indirect
+	github.com/goccy/go-json v0.10.4 // indirect
 	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
@@ -47,8 +47,8 @@ require (
 	github.com/webx-top/poolx v0.0.0-20210912044716-5cfa2d58e380 // indirect
 	github.com/webx-top/tagfast v0.0.1 // indirect
 	github.com/webx-top/validation v0.0.3 // indirect
-	golang.org/x/crypto v0.27.0 // indirect
-	golang.org/x/net v0.29.0 // indirect
-	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
 )
