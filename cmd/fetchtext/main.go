@@ -17,11 +17,11 @@ import (
 )
 
 var (
-	reFunc  = regexp.MustCompile("\\.(?:SetSucT|SetOkT|SetErrT|T|E)\\(`([^`]+)`") // ctx.T(`text``) ctx.T(`%stext``,"a") ctx.E(`text``) ctx.E(`%stext`,"a") .NewError(code.InvalidParameter, `
-	reFunc0 = regexp.MustCompile(`\.(?:SetSucT|SetOkT|SetErrT|T|E)\("([^"]+)"`)   // ctx.T("text") ctx.T("%stext","a") ctx.E("text") ctx.E("%stext","a")
+	reFunc  = regexp.MustCompile("\\.(?:T|E)\\(`([^`]+)`") // ctx.T(`text``) ctx.T(`%stext``,"a") ctx.E(`text``) ctx.E(`%stext`,"a") .NewError(code.InvalidParameter, `
+	reFunc0 = regexp.MustCompile(`\.(?:T|E)\("([^"]+)"`)   // ctx.T("text") ctx.T("%stext","a") ctx.E("text") ctx.E("%stext","a")
 
-	reFunc1   = regexp.MustCompile("\\.NewError\\(code\\.[\\w]+,[ ]?`([^`]+)`")
-	reFunc1_0 = regexp.MustCompile(`\.NewError\(code\.[\w]+,[ ]?"([^"]+)"`)
+	reFunc1   = regexp.MustCompile("\\.NewError\\((?:code|stdCode|codes)\\.[\\w]+,[ ]?`([^`]+)`")
+	reFunc1_0 = regexp.MustCompile(`\.NewError\((?:code|stdCode|codes)\.[\w]+,[ ]?"([^"]+)"`)
 
 	reTplFunc    = regexp.MustCompile(`\{\{(?:[^}]*\()?\$\.T[ ]+"(.*?)"`)      // {{$.T "text"}} {{$.T "%dtext" 1}} {{printf "other%s" ($.T "%dtext" 1)}}
 	reTplFunc0   = regexp.MustCompile("\\{\\{(?:[^}]*\\()?\\$\\.T[ ]+`(.*?)`") // {{$.T `text``}} {{$.T `%dtext`` 1}} {{printf "other%s" ($.T `%dtext`` 1)}}
