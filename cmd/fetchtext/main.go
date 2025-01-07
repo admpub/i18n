@@ -42,6 +42,7 @@ var (
 	translatorParsedConfig = map[string]string{}
 	onlyExportParsed       bool
 	forceAll               bool
+	vendorDirs             string
 )
 
 func main() {
@@ -51,6 +52,7 @@ func main() {
 	flag.StringVar(&lang, `default`, `zh-cn`, `默认语言`)
 	flag.StringVar(&translator, `translator`, `google`, `翻译器类型`)
 	flag.StringVar(&translatorConfig, `translatorConfig`, ``, `翻译器配置(例如百度翻译配置为: appid=APPID&secret=SECRET)`)
+	flag.StringVar(&vendorDirs, `vendorDirs`, ``, `依赖子文件夹`)
 	flag.BoolVar(&translate, `translate`, false, `是否自动翻译`)
 	flag.BoolVar(&forceAll, `forceAll`, false, `是否翻译全部`)
 	flag.BoolVar(&onlyExportParsed, `onlyExport`, false, `是否仅仅导出解析语言文件后的json数据`)
@@ -110,6 +112,19 @@ func main() {
 	if err = parseTranslatorConfig(); err != nil {
 		log.Println(err)
 	}
+	var vendorDirsSlice []string = []string{
+		`github.com/nging-plugins`,
+		`github.com/coscms/webcore`,
+		`github.com/coscms/webfront`,
+	}
+	if len(vendorDirs) > 0 {
+		for _, v := range strings.Split(vendorDirs, `|`) {
+			v = strings.TrimSpace(v)
+			if len(v) > 0 {
+				vendorDirsSlice = append(vendorDirsSlice, v)
+			}
+		}
+	}
 	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -119,17 +134,19 @@ func main() {
 				return filepath.SkipDir
 			}
 			if info.Name() == `vendor` {
-				pluginsDir := filepath.Join(path, `github.com/nging-plugins`)
-				if com.FileExists(pluginsDir) {
-					filepath.Walk(pluginsDir, func(path string, info os.FileInfo, err error) error {
-						if err != nil {
-							return err
-						}
-						if info.IsDir() {
-							return nil
-						}
-						return readResourceFile(path, info)
-					})
+				for _, vendorSubdir := range vendorDirsSlice {
+					pluginsDir := filepath.Join(path, vendorSubdir)
+					if com.FileExists(pluginsDir) {
+						filepath.Walk(pluginsDir, func(path string, info os.FileInfo, err error) error {
+							if err != nil {
+								return err
+							}
+							if info.IsDir() {
+								return nil
+							}
+							return readResourceFile(path, info)
+						})
+					}
 				}
 				return filepath.SkipDir
 			}
