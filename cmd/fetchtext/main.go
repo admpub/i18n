@@ -42,6 +42,7 @@ var (
 	translatorParsedConfig = map[string]string{}
 	onlyExportParsed       bool
 	forceAll               bool
+	clean                  bool
 	vendorDirs             string
 )
 
@@ -55,6 +56,7 @@ func main() {
 	flag.StringVar(&vendorDirs, `vendorDirs`, ``, `依赖子文件夹`)
 	flag.BoolVar(&translate, `translate`, false, `是否自动翻译`)
 	flag.BoolVar(&forceAll, `forceAll`, false, `是否翻译全部`)
+	flag.BoolVar(&clean, `clean`, false, `是否清理不存在的译文`)
 	flag.BoolVar(&onlyExportParsed, `onlyExport`, false, `是否仅仅导出解析语言文件后的json数据`)
 	flag.Parse()
 
@@ -237,6 +239,16 @@ func main() {
 			}
 			rows[key] = text
 			hasNew = true
+		}
+		if clean {
+			for key := range rows {
+				if _, ok := data[key]; !ok {
+					delete(rows, key)
+					if !hasNew {
+						hasNew = true
+					}
+				}
+			}
 		}
 		if hasNew {
 			b, err := confl.Marshal(rows)
