@@ -119,7 +119,7 @@ func (t *Translator) FormatDateTime(format int, datetime time.Time) (string, err
 		timePattern := strings.Trim(t.rules.DateTime.Formats.Time.Short, " ,")
 		pattern = getDateTimePattern(t.rules.DateTime.Formats.DateTime.Short, datePattern, timePattern)
 	default:
-		return "", translatorError{message: "unknown datetime format" + pattern[0:1]}
+		return "", translatorError{message: "unknown datetime format" + pattern[0:1], rawError: ErrUnknownDatetimeFormat}
 	}
 
 	parsed, err := t.parseDateTimeFormat(pattern)
@@ -182,7 +182,7 @@ func (t *Translator) formatDateTimeComponent(datetime time.Time, pattern string)
 		return t.formatDateTimeComponentTimeZone(datetime, len(pattern))
 	}
 
-	return "", translatorError{message: "unknown datetime format unit: " + pattern[0:1]}
+	return "", translatorError{message: "unknown datetime format unit: " + pattern[0:1], rawError: ErrUnknownDatetimeFormatUnit}
 }
 
 // formatDateTimeComponentEra renders an era component.
@@ -203,7 +203,7 @@ func (t *Translator) formatDateTimeComponentYear(datetime time.Time, length int)
 		return t.formatDateTimeComponentYearLengthWide(year), nil
 	}
 
-	return "", translatorError{message: fmt.Sprintf("unsupported year length: %d", length)}
+	return "", translatorError{message: fmt.Sprintf("unsupported year length: %d", length), rawError: ErrUnsupportedYearLength}
 }
 
 // formatDateTimeComponentYearLength2Plus renders a 2-digit year component.
@@ -241,7 +241,7 @@ func (t *Translator) formatDateTimeComponentMonth(datetime time.Time, length int
 		return t.formatDateTimeComponentMonthNarrow(month), nil
 	}
 
-	return "", translatorError{message: fmt.Sprintf("unsupported month length: %d", length)}
+	return "", translatorError{message: fmt.Sprintf("unsupported month length: %d", length), rawError: ErrUnsupportedMonthLength}
 }
 
 // formatDateTimeComponentMonth1Plus renders a numeric month component with 1 or
@@ -372,7 +372,7 @@ func (t *Translator) formatDateTimeComponentDayOfWeek(datetime time.Time, length
 		return t.formatDateTimeComponentDayOfWeekNarrow(datetime.Weekday()), nil
 	}
 
-	return "", translatorError{message: fmt.Sprintf("unsupported year day-of-week: %d", length)}
+	return "", translatorError{message: fmt.Sprintf("unsupported year day-of-week: %d", length), rawError: ErrUnsupportedYearDayofweek}
 }
 
 // formatDateTimeComponentDayOfWeekAbbreviated renders an abbreviated text
@@ -481,7 +481,7 @@ func (t *Translator) formatDateTimeComponentDay(datetime time.Time, length int) 
 		return fmt.Sprintf("%d", day), nil
 	}
 
-	return "", translatorError{message: fmt.Sprintf("unsupported day-of-year: %d", length)}
+	return "", translatorError{message: fmt.Sprintf("unsupported day-of-year: %d", length), rawError: ErrUnsupportedDayofweek}
 }
 
 // formatDateTimeComponentHour12 renders an hour-component using a 12-hour
@@ -502,7 +502,7 @@ func (t *Translator) formatDateTimeComponentHour12(datetime time.Time, length in
 		return fmt.Sprintf("%d", hour), nil
 	}
 
-	return "", translatorError{message: fmt.Sprintf("unsupported hour-12: %d", length)}
+	return "", translatorError{message: fmt.Sprintf("unsupported hour-12: %d", length), rawError: ErrUnsupportedHour12}
 }
 
 // formatDateTimeComponentHour24 renders an hour-component using a 24-hour
@@ -520,7 +520,7 @@ func (t *Translator) formatDateTimeComponentHour24(datetime time.Time, length in
 		return fmt.Sprintf("%d", hour), nil
 	}
 
-	return "", translatorError{message: fmt.Sprintf("unsupported hour-24: %d", length)}
+	return "", translatorError{message: fmt.Sprintf("unsupported hour-24: %d", length), rawError: ErrUnsupportedHour24}
 }
 
 // formatDateTimeComponentMinute renders a minute component.
@@ -537,7 +537,7 @@ func (t *Translator) formatDateTimeComponentMinute(datetime time.Time, length in
 		return fmt.Sprintf("%d", minute), nil
 	}
 
-	return "", translatorError{message: fmt.Sprintf("unsupported minute: %d", length)}
+	return "", translatorError{message: fmt.Sprintf("unsupported minute: %d", length), rawError: ErrUnsupportedMinute}
 }
 
 // formatDateTimeComponentSecond renders a second component
@@ -554,7 +554,7 @@ func (t *Translator) formatDateTimeComponentSecond(datetime time.Time, length in
 		return fmt.Sprintf("%d", second), nil
 	}
 
-	return "", translatorError{message: fmt.Sprintf("unsupported second: %d", length)}
+	return "", translatorError{message: fmt.Sprintf("unsupported second: %d", length), rawError: ErrUnsupportedSecond}
 }
 
 // formatDateTimeComponentPeriod renders a period component (AM/PM).
@@ -572,7 +572,7 @@ func (t *Translator) formatDateTimeComponentPeriod(datetime time.Time, length in
 		return t.formatDateTimeComponentPeriodNarrow(hour), nil
 	}
 
-	return "", translatorError{message: fmt.Sprintf("unsupported day-period: %d", length)}
+	return "", translatorError{message: fmt.Sprintf("unsupported day-period: %d", length), rawError: ErrUnsupportedDayPeriod}
 }
 
 // formatDateTimeComponentPeriodAbbreviated renders an abbreviated period
@@ -605,10 +605,11 @@ func (t *Translator) formatDateTimeComponentPeriodNarrow(hour int) string {
 
 // formatDateTimeComponentQuarter renders a calendar quarter component - this
 // is calendar quarters and not fiscal quarters.
-//  - Q1: Jan-Mar
-//  - Q2: Apr-Jun
-//  - Q3: Jul-Sep
-//  - Q4: Oct-Dec
+//   - Q1: Jan-Mar
+//   - Q2: Apr-Jun
+//   - Q3: Jul-Sep
+//   - Q4: Oct-Dec
+//
 // TODO: not yet implemented
 func (t *Translator) formatDateTimeComponentQuarter(datetime time.Time, length int) (string, error) {
 	return "", nil
@@ -650,12 +651,12 @@ func (t *Translator) parseDateTimeFormat(pattern string) ([]*datetimePatternComp
 			// and set i to the position after the second quote
 
 			if i == len(pattern)-1 {
-				return []*datetimePatternComponent{}, translatorError{message: "malformed datetime format"}
+				return []*datetimePatternComponent{}, translatorError{message: "malformed datetime format", rawError: ErrMalformedDatetimeFormat}
 			}
 
 			nextQuote := strings.Index(pattern[i+1:], string(datetimeFormatLiteral))
 			if nextQuote == -1 {
-				return []*datetimePatternComponent{}, translatorError{message: "malformed datetime format"}
+				return []*datetimePatternComponent{}, translatorError{message: "malformed datetime format", rawError: ErrMalformedDatetimeFormat}
 			}
 
 			component := &datetimePatternComponent{
@@ -717,10 +718,10 @@ func getDateTimePattern(datetimePattern, datePattern, timePattern string) string
 
 // lastSequenceIndex looks at the first character in a string and returns the
 // last digits of the first sequence of that character. For example:
-//  - ABC: 0
-//  - AAB: 1
-//  - ABA: 0
-//  - AAA: 2
+//   - ABC: 0
+//   - AAB: 1
+//   - ABA: 0
+//   - AAA: 2
 func lastSequenceIndex(str string) int {
 	if len(str) == 0 {
 		return -1

@@ -34,7 +34,7 @@ func (t *Translator) Translate(key string, substitutions map[string]string) (tra
 			return t.fallback.Translate(key, substitutions)
 		}
 
-		errors = append(errors, translatorError{translator: t, message: "key not found: " + key})
+		errors = append(errors, translatorError{translator: t, message: "key not found: " + key, rawError: ErrKeyNotFound})
 		return
 	}
 
@@ -59,7 +59,7 @@ func (t *Translator) Pluralize(key string, number float64, numberStr string) (tr
 			return t.fallback.Pluralize(key, number, numberStr)
 		}
 
-		errors = append(errors, translatorError{translator: t, message: "key not found: " + key})
+		errors = append(errors, translatorError{translator: t, message: "key not found: " + key, rawError: ErrKeyNotFound})
 		return
 	}
 
