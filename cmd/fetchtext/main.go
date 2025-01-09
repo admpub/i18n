@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/admpub/confl"
+	"github.com/admpub/i18n"
 	"github.com/webx-top/com"
 )
 
@@ -206,22 +207,23 @@ func main() {
 		var hasNew bool
 		for key := range data {
 			oldText, existsText := rows[key]
+			noPrefixKey := i18n.TrimGroupPrefix(key)
 			var text string
 			if translate {
 				if !existsText {
-					oldText = key
+					oldText = noPrefixKey
 				}
 				needTr := forceAll || needTranslation(oldText, destLang)
 				if !needTr {
 					continue
 				}
-				text, err = translatorFn(key, destLang)
+				text, err = translatorFn(noPrefixKey, destLang)
 				if err != nil {
 					wait := time.Second * 2
 					for i := 0; i < 5; i++ {
 						log.Println(err.Error(), `Will retry after `+wait.String(), fmt.Sprintf(`(%d/%d)`, i+1, 5))
 						time.Sleep(wait)
-						text, err = translatorFn(key, destLang)
+						text, err = translatorFn(noPrefixKey, destLang)
 						if err == nil {
 							break
 						}
@@ -231,11 +233,11 @@ func main() {
 					log.Println(err)
 					break
 				}
-				if text == key {
+				if text == noPrefixKey {
 					continue
 				}
 			} else {
-				text = key
+				text = noPrefixKey
 			}
 			rows[key] = text
 			hasNew = true
