@@ -100,6 +100,10 @@ func (t *Translator) substitute(str string, substitutions map[string]string) (su
 
 	substituted = str
 
+	if substitutions == nil {
+		return
+	}
+
 	for find, replace := range substitutions {
 		if !strings.Contains(str, "{"+find+"}") {
 			errors = append(errors, translatorError{translator: t, message: "substitution not found: " + str + ", " + replace})
