@@ -7,7 +7,7 @@ func TrimGroupPrefix(format string) string {
 		s := format[1:]
 		parts := strings.SplitN(s, `#`, 2)
 		if len(parts) == 2 {
-			format = parts[1]
+			return parts[1]
 		}
 	}
 	return format
