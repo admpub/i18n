@@ -31,6 +31,7 @@ var (
 	reJSFunc     = regexp.MustCompile(`App\.t\('([^']+)'`)                     // App.t('text') App.t('%stext','a')
 	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)                     // App.t("text") App.t("%stext",'a')
 	reChinese    = regexp.MustCompile(`[\p{Han}]+`)
+	nltrReplacer = strings.NewReplacer(`\n`, "\n", `\t`, "\t", `\r`, "\r")
 
 	//settings
 	src                    string
@@ -217,13 +218,14 @@ func main() {
 				if !needTr {
 					continue
 				}
-				text, err = translatorFn(noPrefixKey, destLang)
+				srcText := nltrReplacer.Replace(noPrefixKey)
+				text, err = translatorFn(srcText, destLang)
 				if err != nil {
 					wait := time.Second * 2
 					for i := 0; i < 5; i++ {
 						log.Println(err.Error(), `Will retry after `+wait.String(), fmt.Sprintf(`(%d/%d)`, i+1, 5))
 						time.Sleep(wait)
-						text, err = translatorFn(noPrefixKey, destLang)
+						text, err = translatorFn(srcText, destLang)
 						if err == nil {
 							break
 						}
