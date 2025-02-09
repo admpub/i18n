@@ -17,19 +17,21 @@ import (
 	"github.com/webx-top/com"
 )
 
+const tplTagS = `(?:-?[ ]*)?`
+
 var (
-	reFunc  = regexp.MustCompile("\\.(?:T|E)\\(`([^`]+)`") // ctx.T(`text``) ctx.T(`%stext``,"a") ctx.E(`text``) ctx.E(`%stext`,"a") .NewError(code.InvalidParameter, `
+	reFunc  = regexp.MustCompile("\\.(?:T|E)\\(`([^`]+)`") // ctx.T(`text``) ctx.T(`%stext``,"a") ctx.E(`text``) ctx.E(`%stext`,"a")
 	reFunc0 = regexp.MustCompile(`\.(?:T|E)\("([^"]+)"`)   // ctx.T("text") ctx.T("%stext","a") ctx.E("text") ctx.E("%stext","a")
 
-	reFunc1   = regexp.MustCompile("\\.NewError\\((?:code|stdCode|codes)\\.[\\w]+,[ ]?`([^`]+)`")
+	reFunc1   = regexp.MustCompile("\\.NewError\\((?:code|stdCode|codes)\\.[\\w]+,[ ]?`([^`]+)`") //.NewError(code.InvalidParameter, `
 	reFunc1_0 = regexp.MustCompile(`\.NewError\((?:code|stdCode|codes)\.[\w]+,[ ]?"([^"]+)"`)
 
-	reTplFunc    = regexp.MustCompile(`\{\{(?:[^}]*\()?\$\.T[ ]+"(.*?)"`)      // {{$.T "text"}} {{$.T "%dtext" 1}} {{printf "other%s" ($.T "%dtext" 1)}}
-	reTplFunc0   = regexp.MustCompile("\\{\\{(?:[^}]*\\()?\\$\\.T[ ]+`(.*?)`") // {{$.T `text``}} {{$.T `%dtext`` 1}} {{printf "other%s" ($.T `%dtext`` 1)}}
-	reTplFunc1   = regexp.MustCompile(`\{\{"(.*?)"[ ]*\|[ ]*\$\.T[ }|]`)       // {{"text"|$.T}} {{"text"|$.T|ToHTML}}
-	reTplFunc1_0 = regexp.MustCompile("\\{\\{`(.*?)`[ ]*\\|[ ]*\\$\\.T[ }|]")  // {{`text`|$.T}} {{`text`|$.T|ToHTML}}
-	reJSFunc     = regexp.MustCompile(`App\.t\('([^']+)'`)                     // App.t('text') App.t('%stext','a')
-	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)                     // App.t("text") App.t("%stext",'a')
+	reTplFunc    = regexp.MustCompile(`\{\{` + tplTagS + `(?:[^}]*\()?\$\.T[ ]+"(.*?)"`)      // {{$.T "text"}} {{$.T "%dtext" 1}} {{printf "other%s" ($.T "%dtext" 1)}}
+	reTplFunc0   = regexp.MustCompile("\\{\\{" + tplTagS + "(?:[^}]*\\()?\\$\\.T[ ]+`(.*?)`") // {{$.T `text``}} {{$.T `%dtext`` 1}} {{printf "other%s" ($.T `%dtext`` 1)}}
+	reTplFunc1   = regexp.MustCompile(`\{\{` + tplTagS + `"(.*?)"[ ]*\|[ ]*\$\.T[ }|]`)       // {{"text"|$.T}} {{"text"|$.T|ToHTML}}
+	reTplFunc1_0 = regexp.MustCompile("\\{\\{" + tplTagS + "`(.*?)`[ ]*\\|[ ]*\\$\\.T[ }|]")  // {{`text`|$.T}} {{`text`|$.T|ToHTML}}
+	reJSFunc     = regexp.MustCompile(`App\.t\('([^']+)'`)                                    // App.t('text') App.t('%stext','a')
+	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)                                    // App.t("text") App.t("%stext",'a')
 	reChinese    = regexp.MustCompile(`[\p{Han}]+`)
 	nltrReplacer = strings.NewReplacer(`\n`, "\n", `\t`, "\t", `\r`, "\r")
 
