@@ -47,7 +47,7 @@ func (s *MySuite) TestLoad(c *C) {
 		"sl", "sn", "so", "sq", "sr", "ss", "ssy", "st", "sv", "sw", "swc",
 		"ta", "te", "teo", "tg", "th", "ti", "tig", "tn", "to", "tr", "ts",
 		"twq", "tzm", "uk", "ur", "uz", "vai", "ve", "vi", "vo", "vun", "wae",
-		"wal", "xh", "xog", "yav", "yo", "zh-hans", "zh", "zu",
+		"wal", "xh", "xog", "yav", "yo", "zh-CN", "zh", "zu",
 	}
 
 	for _, l := range locales {
