@@ -1,15 +1,15 @@
 module github.com/admpub/i18n
 
-go 1.23
+go 1.24.0
 
 require (
 	github.com/admpub/confl v0.2.4
 	github.com/admpub/godotenv v1.4.3
 	github.com/elazarl/go-bindata-assetfs v1.0.1
-	github.com/webx-top/com v1.3.20
+	github.com/webx-top/com v1.3.31
 	github.com/webx-top/echo v1.6.1
-	github.com/webx-top/restyclient v0.0.5
-	golang.org/x/text v0.22.0
+	github.com/webx-top/restyclient v0.0.6
+	golang.org/x/text v0.28.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 	gopkg.in/stretchr/testify.v1 v1.2.2
 	gopkg.in/yaml.v3 v3.0.1
@@ -19,14 +19,14 @@ require (
 	github.com/admpub/color v1.8.1 // indirect
 	github.com/admpub/decimal v1.3.1 // indirect
 	github.com/admpub/events v1.3.6 // indirect
-	github.com/admpub/fsnotify v1.7.0 // indirect
+	github.com/admpub/fsnotify v1.7.1 // indirect
 	github.com/admpub/go-isatty v0.0.11 // indirect
 	github.com/admpub/go-reuseport v0.0.4 // indirect
 	github.com/admpub/humanize v0.0.0-20190501023926-5f826e92c8ca // indirect
 	github.com/admpub/log v1.4.0 // indirect
 	github.com/admpub/once v0.0.1 // indirect
 	github.com/admpub/realip v0.1.1 // indirect
-	github.com/admpub/resty/v2 v2.7.1 // indirect
+	github.com/admpub/resty/v2 v2.7.2 // indirect
 	github.com/admpub/timeago v1.2.1 // indirect
 	github.com/araddon/gou v0.0.0-20190110011759-c797efecbb61 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -47,8 +47,8 @@ require (
 	github.com/webx-top/poolx v0.0.0-20210912044716-5cfa2d58e380 // indirect
 	github.com/webx-top/tagfast v0.0.1 // indirect
 	github.com/webx-top/validation v0.0.3 // indirect
-	golang.org/x/crypto v0.33.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/crypto v0.41.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/sync v0.16.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
 )
