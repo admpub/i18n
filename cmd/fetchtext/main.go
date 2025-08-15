@@ -54,7 +54,7 @@ func main() {
 	flag.StringVar(&src, `src`, `.`, `分析目录`)
 	flag.StringVar(&dist, `dist`, `./messages`, `messages文件保存目录`)
 	flag.StringVar(&exts, `exts`, `go|html|js`, `正则表达式`)
-	flag.StringVar(&lang, `default`, `zh-cn`, `默认语言`)
+	flag.StringVar(&lang, `default`, `zh-CN`, `默认语言`)
 	flag.StringVar(&translator, `translator`, `google`, `翻译器类型`)
 	flag.StringVar(&translatorConfig, `translatorConfig`, ``, `翻译器配置(例如百度翻译配置为: appid=APPID&secret=SECRET)`)
 	flag.StringVar(&vendorDirs, `vendorDirs`, ``, `依赖子文件夹`)
@@ -282,7 +282,7 @@ func main() {
 }
 
 func needTranslation(text string, destLang string) bool {
-	if destLang == `zh-cn` {
+	if destLang == `zh-CN` || destLang == `zh-cn` || destLang == `zh` {
 		return !reChinese.MatchString(text)
 	}
 	return reChinese.MatchString(text)
