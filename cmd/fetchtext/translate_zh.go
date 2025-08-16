@@ -23,6 +23,8 @@ func convertChinese(content string, srcLang string, destLang string) (string, er
 			dictType = opencc.TW2SP
 		case `zh-hk`:
 			dictType = opencc.HK2S
+		default:
+			return content, nil
 		}
 	}
 	cc, err := opencc.NewOpenCC(dictType)
