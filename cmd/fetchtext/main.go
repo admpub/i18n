@@ -223,15 +223,19 @@ func main() {
 					continue
 				}
 				srcText := nltrReplacer.Replace(noPrefixKey)
-				text, err = translatorFn(srcText, destLang)
-				if err != nil {
-					wait := time.Second * 2
-					for i := 0; i < 5; i++ {
-						log.Println(err.Error(), `Will retry after `+wait.String(), fmt.Sprintf(`(%d/%d)`, i+1, 5))
-						time.Sleep(wait)
-						text, err = translatorFn(srcText, destLang)
-						if err == nil {
-							break
+				if destLang == `zh-TW` || destLang == `zh-HK` {
+					text, err = convertChinese(srcText, lang, destLang)
+				} else {
+					text, err = translatorFn(srcText, destLang)
+					if err != nil {
+						wait := time.Second * 2
+						for i := 0; i < 5; i++ {
+							log.Println(err.Error(), `Will retry after `+wait.String(), fmt.Sprintf(`(%d/%d)`, i+1, 5))
+							time.Sleep(wait)
+							text, err = translatorFn(srcText, destLang)
+							if err == nil {
+								break
+							}
 						}
 					}
 				}
