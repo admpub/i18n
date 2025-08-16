@@ -26,6 +26,12 @@ func parseTranslatorConfig() (err error) {
 			}
 		}
 	}
+	if len(envFile) > 0 {
+		envMap, _ := godotenv.Read(envFile)
+		for k, v := range envMap {
+			translatorParsedConfig[k] = v
+		}
+	}
 	if com.FileExists(`.translator.env`) {
 		envMap, _ := godotenv.Read(".translator.env")
 		for k, v := range envMap {

@@ -48,6 +48,7 @@ var (
 	forceAll               bool
 	clean                  bool
 	vendorDirs             string
+	envFile                string
 )
 
 func main() {
@@ -57,6 +58,7 @@ func main() {
 	flag.StringVar(&lang, `default`, `zh-CN`, `默认语言`)
 	flag.StringVar(&translator, `translator`, `google`, `翻译器类型`)
 	flag.StringVar(&translatorConfig, `translatorConfig`, ``, `翻译器配置(例如百度翻译配置为: appid=APPID&secret=SECRET)`)
+	flag.StringVar(&envFile, `envFile`, ``, `环境变量配置文件`)
 	flag.StringVar(&vendorDirs, `vendorDirs`, ``, `依赖子文件夹`)
 	flag.BoolVar(&translate, `translate`, false, `是否自动翻译`)
 	flag.BoolVar(&forceAll, `forceAll`, false, `是否翻译全部`)
