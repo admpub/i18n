@@ -1,10 +1,11 @@
 module github.com/admpub/i18n
 
-go 1.24.0
+go 1.24.5
 
 require (
 	github.com/admpub/confl v0.2.4
 	github.com/admpub/godotenv v1.4.3
+	github.com/admpub/opencc v0.0.0-20250816092445-4bd2bd325dd9
 	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/webx-top/com v1.3.31
 	github.com/webx-top/echo v1.6.1
