@@ -49,6 +49,7 @@ var (
 	clean                  bool
 	vendorDirs             string
 	envFile                string
+	onlyTranslateIncr      bool
 )
 
 func main() {
@@ -64,6 +65,7 @@ func main() {
 	flag.BoolVar(&forceAll, `forceAll`, false, `是否翻译全部`)
 	flag.BoolVar(&clean, `clean`, false, `是否清理不存在的译文`)
 	flag.BoolVar(&onlyExportParsed, `onlyExport`, false, `是否仅仅导出解析语言文件后的json数据`)
+	flag.BoolVar(&onlyTranslateIncr, `onlyTranslateIncr`, false, `是否仅仅翻译新增的未翻译文本`)
 	flag.Parse()
 
 	data := map[string][]string{} //键保存待翻译的文本，值保存出现待翻译文本的文件名
@@ -217,6 +219,10 @@ func main() {
 			if translate {
 				if !existsText {
 					oldText = noPrefixKey
+				} else if len(oldText) > 0 {
+					if onlyTranslateIncr {
+						continue
+					}
 				}
 				needTr := forceAll || needTranslation(oldText, destLang)
 				if !needTr {
