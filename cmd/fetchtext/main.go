@@ -14,7 +14,10 @@ import (
 
 	"github.com/admpub/confl"
 	"github.com/admpub/i18n"
+	"github.com/coscms/forms"
+	formsconfig "github.com/coscms/forms/config"
 	"github.com/webx-top/com"
+	"gopkg.in/yaml.v3"
 )
 
 const tplTagS = `(?:-?[ ]*)?`
@@ -55,7 +58,7 @@ var (
 func main() {
 	flag.StringVar(&src, `src`, `.`, `分析目录`)
 	flag.StringVar(&dist, `dist`, `./messages`, `messages文件保存目录`)
-	flag.StringVar(&exts, `exts`, `go|html|js`, `正则表达式`)
+	flag.StringVar(&exts, `exts`, `go|html|js|form\.json|form\.yaml|form\.yml`, `正则表达式`)
 	flag.StringVar(&lang, `default`, `zh-CN`, `默认语言`)
 	flag.StringVar(&translator, `translator`, `google`, `翻译器类型`)
 	flag.StringVar(&translatorConfig, `translatorConfig`, ``, `翻译器配置(例如百度翻译配置为: appid=APPID&secret=SECRET)`)
@@ -77,10 +80,6 @@ func main() {
 		if !reExt.MatchString(info.Name()) {
 			return nil
 		}
-		content, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
 		var regexes []*regexp.Regexp
 		switch strings.ToLower(filepath.Ext(info.Name())) {
 		case `.go`:
@@ -90,6 +89,42 @@ func main() {
 		case `.js`:
 			regexes = jsRegexes
 		default:
+			var texts map[string]struct{}
+			if strings.HasSuffix(info.Name(), `.form.json`) {
+				content, err := os.ReadFile(path)
+				if err != nil {
+					return err
+				}
+				var cfg *formsconfig.Config
+				cfg, err = forms.Unmarshal(content, path)
+				if err != nil {
+					return err
+				}
+				texts = cfg.GetMultilingualText()
+			} else if strings.HasSuffix(info.Name(), `.form.yaml`) || strings.HasSuffix(info.Name(), `.form.yml`) {
+				content, err := os.ReadFile(path)
+				if err != nil {
+					return err
+				}
+
+				cfg := &formsconfig.Config{}
+				err = yaml.Unmarshal(content, cfg)
+				if err != nil {
+					return err
+				}
+				texts = cfg.GetMultilingualText()
+			}
+			for k := range texts {
+				if _, y := data[k]; y {
+					data[k] = append(data[k], path)
+					continue
+				}
+				data[k] = []string{path}
+			}
+			return nil
+		}
+		content, err := os.ReadFile(path)
+		if err != nil {
 			return err
 		}
 		for _, re := range regexes {
