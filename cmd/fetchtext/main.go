@@ -138,7 +138,7 @@ func main() {
 					continue
 				}
 				if needStripSlashes {
-					s = com.StripSlashes(s)
+					s = com.StripSlashesOnlyQuote(s)
 				}
 				if _, y := data[s]; y {
 					data[s] = append(data[s], path)

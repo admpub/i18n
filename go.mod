@@ -8,7 +8,7 @@ require (
 	github.com/admpub/opencc v0.0.0-20250816092445-4bd2bd325dd9
 	github.com/coscms/forms v1.16.12
 	github.com/elazarl/go-bindata-assetfs v1.0.1
-	github.com/webx-top/com v1.4.1
+	github.com/webx-top/com v1.4.2
 	github.com/webx-top/echo v1.6.1
 	github.com/webx-top/restyclient v0.0.6
 	golang.org/x/text v0.35.0
