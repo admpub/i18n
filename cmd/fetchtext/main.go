@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 
@@ -21,6 +22,7 @@ import (
 )
 
 const tplTagS = `(?:-?[ ]*)?`
+const tplTxtE = `[ )}|]`
 
 var (
 	reFunc  = regexp.MustCompile("\\.(?:T|E)\\(`([^`]+)`")  // ctx.T(`text``) ctx.T(`%stext``,"a") ctx.E(`text``) ctx.E(`%stext`,"a")
@@ -29,12 +31,12 @@ var (
 	reFunc1   = regexp.MustCompile("\\.NewError\\((?:code|stdCode|codes|xcode)\\.[\\w]+,[ ]?`([^`]+)`") //.NewError(code.InvalidParameter, `aaa`
 	reFunc1_0 = regexp.MustCompile(`\.NewError\((?:code|stdCode|codes|xcode)\.[\w]+,[ ]?"(.*?)"[ ,)]`)  //.NewError(code.InvalidParameter, "")
 
-	reTplFunc    = regexp.MustCompile(`\{\{` + tplTagS + `(?:[^}]*\()?\$\.(?:T|RawT)[ ]+"(.*?)"[ }|]`)   // {{$.T "text"}} {{$.T "%dtext" 1}} {{printf "other%s" ($.T "%dtext" 1)}}
-	reTplFunc0   = regexp.MustCompile("\\{\\{" + tplTagS + "(?:[^}]*\\()?\\$\\.(?:T|RawT)[ ]+`([^`]+)`") // {{$.T `text``}} {{$.T `%dtext`` 1}} {{printf "other%s" ($.T `%dtext`` 1)}}
-	reTplFunc1   = regexp.MustCompile(`\{\{` + tplTagS + `"(.*?)"[ ]*\|[ ]*\$\.(?:T|RawT)[ }|]`)         // {{"text"|$.T}} {{"text"|$.T|ToHTML}}
-	reTplFunc1_0 = regexp.MustCompile("\\{\\{" + tplTagS + "`([^`]+)`[ ]*\\|[ ]*\\$\\.(?:T|RawT)[ }|]")  // {{`text`|$.T}} {{`text`|$.T|ToHTML}}
-	reJSFunc     = regexp.MustCompile(`App\.t\('([^']+)'`)                                               // App.t('text') App.t('%stext','a')
-	reJSFunc0    = regexp.MustCompile(`App\.t\("([^"]+)"`)                                               // App.t("text") App.t("%stext",'a')
+	reTplFunc    = regexp.MustCompile(`\{\{` + tplTagS + `(?:[^}]*\()?\$\.(?:T|RawT)[ ]+"(.*?)"` + tplTxtE)  // {{$.T "text"}} {{$.T "%dtext" 1}} {{printf "other%s" ($.T "%dtext" 1)}}
+	reTplFunc0   = regexp.MustCompile("\\{\\{" + tplTagS + "(?:[^}]*\\()?\\$\\.(?:T|RawT)[ ]+`([^`]+)`")     // {{$.T `text``}} {{$.T `%dtext`` 1}} {{printf "other%s" ($.T `%dtext`` 1)}}
+	reTplFunc1   = regexp.MustCompile(`\{\{` + tplTagS + `"(.*?)"[ ]*\|[ ]*\$\.(?:T|RawT)` + tplTxtE)        // {{"text"|$.T}} {{"text"|$.T|ToHTML}}
+	reTplFunc1_0 = regexp.MustCompile("\\{\\{" + tplTagS + "`([^`]+)`[ ]*\\|[ ]*\\$\\.(?:T|RawT)" + tplTxtE) // {{`text`|$.T}} {{`text`|$.T|ToHTML}}
+	reJSFunc     = regexp.MustCompile(`App\.t\('(.*?)'[ ,)]`)                                                // App.t('text') App.t('%stext','a')
+	reJSFunc0    = regexp.MustCompile(`App\.t\("(.*?)"[ ,)]`)                                                // App.t("text") App.t("%stext",'a')
 	reChinese    = regexp.MustCompile(`[\p{Han}]+`)
 	nltrReplacer = strings.NewReplacer(`\n`, "\n", `\t`, "\t", `\r`, "\r")
 
@@ -76,6 +78,7 @@ func main() {
 	htmlRegexes := []*regexp.Regexp{reTplFunc, reTplFunc0, reTplFunc1, reTplFunc1_0}
 	jsRegexes := []*regexp.Regexp{reJSFunc, reJSFunc0}
 	reExt := regexp.MustCompile(`\.(` + exts + `)$`)
+	stripSlashes := []*regexp.Regexp{reFunc0, reFunc1_0, reTplFunc, reTplFunc1, reJSFunc0}
 	var readResourceFile = func(path string, info os.FileInfo) error {
 		if !reExt.MatchString(info.Name()) {
 			return nil
@@ -128,10 +131,14 @@ func main() {
 			return err
 		}
 		for _, re := range regexes {
+			needStripSlashes := slices.Contains(stripSlashes, re)
 			for _, b := range re.FindAllSubmatch(content, -1) {
 				s := string(b[1])
 				if len(s) == 0 {
 					continue
+				}
+				if needStripSlashes {
+					s = com.StripSlashes(s)
 				}
 				if _, y := data[s]; y {
 					data[s] = append(data[s], path)

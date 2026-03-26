@@ -56,4 +56,10 @@ func TestRegexp(t *testing.T) {
 		assert.Equal(t, `te\"xt`, reTplFunc.FindAllStringSubmatch(test, -1)[0][1])
 		assert.True(t, reTplFunc.MatchString(test))
 	}
+	for _, test := range []string{`{{(Date $v.Created).Format (printf "%s%s" ($.RawT "2006年1月2日") " 15:04")}}`} {
+		t.Log(test)
+		t.Log(reTplFunc.FindAllStringSubmatch(test, -1))
+		assert.Equal(t, `2006年1月2日`, reTplFunc.FindAllStringSubmatch(test, -1)[0][1])
+		assert.True(t, reTplFunc.MatchString(test))
+	}
 }
