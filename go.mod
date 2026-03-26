@@ -1,17 +1,17 @@
 module github.com/admpub/i18n
 
-go 1.24.5
+go 1.25.0
 
 require (
 	github.com/admpub/confl v0.2.4
 	github.com/admpub/godotenv v1.4.4
 	github.com/admpub/opencc v0.0.0-20250816092445-4bd2bd325dd9
-	github.com/coscms/forms v1.14.0
+	github.com/coscms/forms v1.16.12
 	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/webx-top/com v1.4.1
 	github.com/webx-top/echo v1.6.1
 	github.com/webx-top/restyclient v0.0.6
-	golang.org/x/text v0.31.0
+	golang.org/x/text v0.35.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 	gopkg.in/stretchr/testify.v1 v1.2.2
 	gopkg.in/yaml.v3 v3.0.1
@@ -26,16 +26,18 @@ require (
 	github.com/admpub/go-reuseport v0.0.4 // indirect
 	github.com/admpub/humanize v0.0.0-20190501023926-5f826e92c8ca // indirect
 	github.com/admpub/json5 v0.0.1 // indirect
-	github.com/admpub/log v1.4.0 // indirect
-	github.com/admpub/once v0.0.1 // indirect
+	github.com/admpub/log v1.5.2 // indirect
+	github.com/admpub/once v0.0.2 // indirect
 	github.com/admpub/realip v0.1.1 // indirect
-	github.com/admpub/resty/v2 v2.7.2 // indirect
+	github.com/admpub/resty/v2 v2.7.3 // indirect
 	github.com/admpub/timeago v1.2.1 // indirect
 	github.com/araddon/gou v0.0.0-20190110011759-c797efecbb61 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
-	github.com/goccy/go-json v0.10.5 // indirect
-	github.com/hashicorp/go-version v1.7.0 // indirect
+	github.com/goccy/go-json v0.10.6 // indirect
+	github.com/gosimple/slug v1.15.0 // indirect
+	github.com/gosimple/unidecode v1.0.1 // indirect
+	github.com/hashicorp/go-version v1.8.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/kr/text v0.1.0 // indirect
@@ -50,8 +52,8 @@ require (
 	github.com/webx-top/poolx v0.0.0-20210912044716-5cfa2d58e380 // indirect
 	github.com/webx-top/tagfast v0.0.1 // indirect
 	github.com/webx-top/validation v0.0.3 // indirect
-	golang.org/x/crypto v0.45.0 // indirect
-	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/sync v0.18.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/crypto v0.49.0 // indirect
+	golang.org/x/net v0.52.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 )
