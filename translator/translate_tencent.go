@@ -1,4 +1,4 @@
-package main
+package translator
 
 import (
 	"crypto/hmac"
@@ -51,18 +51,18 @@ type tencentResponseError struct {
 const tencentMaxBytes = 6000
 
 // documention: https://cloud.tencent.com/document/product/551/40566
-func tencentTranslate(text string, destLang string) (string, error) {
+func tencentTranslate(tcfg Config, text string, destLang string) (string, error) {
 	time.Sleep(time.Millisecond * 220) // 接口频率限制：5次/秒
 	url := `https://tmt.tencentcloudapi.com`
 	req := restyclient.Classic()
 	data := tencentRequest{
 		SourceTextList: []string{text},
-		Source:         strings.SplitN(lang, `-`, 2)[0],
+		Source:         strings.SplitN(tcfg.Lang, `-`, 2)[0],
 		Target:         strings.SplitN(destLang, `-`, 2)[0],
 	}
 	body, _ := json.Marshal(data)
-	secretId := translatorParsedConfig[`appid`]
-	secretKey := translatorParsedConfig[`secret`]
+	secretId := tcfg.TranslatorParsedConfig[`appid`]
+	secretKey := tcfg.TranslatorParsedConfig[`secret`]
 	r := &tencentResponse{}
 	req.SetBody(data).SetResult(r).SetHeaders(makeTencentSign(secretId, secretKey, string(body)))
 	resp, e := req.Post(url)

@@ -1,4 +1,4 @@
-package main
+package translator
 
 import (
 	"encoding/json"
@@ -34,16 +34,16 @@ type baiduResponse struct {
 	Results []*baiduTransResult `json:"trans_result"`
 }
 
-func baiduTranslate(text string, destLang string) (string, error) {
+func baiduTranslate(tcfg Config, text string, destLang string) (string, error) {
 	time.Sleep(time.Second) // 接口频率限制：1次/秒
 	values := url.Values{
 		`q`:     []string{text},
-		`from`:  []string{strings.SplitN(lang, `-`, 2)[0]},
+		`from`:  []string{strings.SplitN(tcfg.Lang, `-`, 2)[0]},
 		`to`:    []string{strings.SplitN(destLang, `-`, 2)[0]},
-		`appid`: []string{translatorParsedConfig[`appid`]},
+		`appid`: []string{tcfg.TranslatorParsedConfig[`appid`]},
 		`salt`:  []string{com.RandomAlphanumeric(16)},
 	}
-	sign := com.Md5(translatorParsedConfig[`appid`] + values.Get(`q`) + values.Get(`salt`) + translatorParsedConfig[`secret`]) //  appid+q+salt+密钥
+	sign := com.Md5(tcfg.TranslatorParsedConfig[`appid`] + values.Get(`q`) + values.Get(`salt`) + tcfg.TranslatorParsedConfig[`secret`]) //  appid+q+salt+密钥
 	values.Add(`sign`, sign)
 	url := `https://fanyi-api.baidu.com/api/trans/vip/translate?` + values.Encode()
 	req := restyclient.Classic()
