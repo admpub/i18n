@@ -44,6 +44,7 @@ func (c *Config) ParseCLI() {
 }
 
 func (c *Config) ParseTranslatorConfig() (err error) {
+	c.TranslatorParsedConfig = map[string]string{}
 	if len(c.TranslatorConfig) > 0 {
 		if c.TranslatorConfig[0] == '{' {
 			err = json.Unmarshal([]byte(c.TranslatorConfig), &c.TranslatorParsedConfig)
