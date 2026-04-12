@@ -3,11 +3,12 @@ package translator
 import (
 	"testing"
 
+	"github.com/admpub/i18n/translator"
 	"gopkg.in/stretchr/testify.v1/assert"
 )
 
 func TestTencent(t *testing.T) {
-	cfg := Config{Lang: `zh-cn`, Translator: `tencent`, TranslatorConfig: `appid=&secret=`}
+	cfg := translator.Config{Lang: `zh-cn`, Translator: `tencent`, TranslatorConfig: `appid=&secret=`}
 	err := cfg.ParseTranslatorConfig()
 	assert.NoError(t, err)
 	t.Logf(`config: %+v`, cfg.TranslatorParsedConfig)

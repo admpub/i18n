@@ -9,8 +9,13 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/admpub/i18n/translator"
 	"github.com/webx-top/restyclient"
 )
+
+func init() {
+	translator.RegisterTranslator(`google`, googleTranslate)
+}
 
 var reGoogleTKK = regexp.MustCompile(`(?i)TKK\=eval\('\(\(function\(\)\{var\s+a\\x3d(-?\d+);var\s+b\\x3d(-?\d+);return\s+(\d+)\+`)
 
@@ -39,7 +44,7 @@ func googleTK() (string, error) {
 	return ``, nil
 }
 
-func googleTranslate(tcfg Config, text string, destLang string) (string, error) {
+func googleTranslate(tcfg translator.Config, text string, destLang string) (string, error) {
 	//TODO: Automatic translation
 	//http://translate.google.cn/translate_a/single?client=gtx&sl=zh-cn&tl=en&dt=t&q=中国&ie=UTF-8&oe=UTF-8
 	url := `http://translate.google.cn/translate_a/single?client=gtx&sl=` + strings.ToLower(tcfg.Lang) + `&tl=` + destLang + `&dt=t&q=` + url.QueryEscape(text)

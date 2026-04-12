@@ -7,9 +7,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/admpub/i18n/translator"
 	"github.com/webx-top/com"
 	"github.com/webx-top/restyclient"
 )
+
+func init() {
+	translator.RegisterTranslator(`baidu`, baiduTranslate)
+}
 
 /*
 {
@@ -34,7 +39,7 @@ type baiduResponse struct {
 	Results []*baiduTransResult `json:"trans_result"`
 }
 
-func baiduTranslate(tcfg Config, text string, destLang string) (string, error) {
+func baiduTranslate(tcfg translator.Config, text string, destLang string) (string, error) {
 	time.Sleep(time.Second) // 接口频率限制：1次/秒
 	values := url.Values{
 		`q`:     []string{text},

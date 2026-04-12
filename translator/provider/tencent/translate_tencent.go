@@ -10,8 +10,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/admpub/i18n/translator"
 	"github.com/webx-top/restyclient"
 )
+
+func init() {
+	translator.RegisterTranslator(`tencent`, tencentTranslate)
+}
 
 func sha256hex(s string) string {
 	b := sha256.Sum256([]byte(s))
@@ -51,7 +56,7 @@ type tencentResponseError struct {
 const tencentMaxBytes = 6000
 
 // documention: https://cloud.tencent.com/document/product/551/40566
-func tencentTranslate(tcfg Config, text string, destLang string) (string, error) {
+func tencentTranslate(tcfg translator.Config, text string, destLang string) (string, error) {
 	time.Sleep(time.Millisecond * 220) // 接口频率限制：5次/秒
 	url := `https://tmt.tencentcloudapi.com`
 	req := restyclient.Classic()
